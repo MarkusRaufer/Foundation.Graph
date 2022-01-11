@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Graph", "Foundation.Graph\Foundation.Graph.csproj", "{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Graph.Tests", "Foundation.Graph.Tests\Foundation.Graph.Tests.csproj", "{DCF981AD-F66D-49DC-9260-D560043D5BC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF981AD-F66D-49DC-9260-D560043D5BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF981AD-F66D-49DC-9260-D560043D5BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF981AD-F66D-49DC-9260-D560043D5BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF981AD-F66D-49DC-9260-D560043D5BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DE97D6AC-2956-4A37-8560-B7A0BFEC34F7}
+	EndGlobalSection
+EndGlobal
