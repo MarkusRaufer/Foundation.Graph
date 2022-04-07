@@ -7,7 +7,7 @@ public class NodeSet<TNode> : INodeSet<TNode>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private ICollection<TNode> _nodes;
+    private readonly ICollection<TNode> _nodes;
 
     public NodeSet()
     {
