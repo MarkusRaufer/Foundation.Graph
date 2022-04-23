@@ -1,4 +1,5 @@
 ﻿using Foundation.Collections.Generic;
+using System.Linq;
 
 namespace Foundation.Graph.Algorithm;
 
@@ -158,6 +159,18 @@ public static class DirectedSearch
         return null == edgePredicate
             ? graph.Nodes.Except(graph.Edges.Select(e => e.Source))
             : graph.Nodes.Except(graph.Edges.Where(edgePredicate).Select(e => e.Source));
+    }
+
+    public static IEnumerable<TNode> TerminalNodes<TNodeId, TNode, TEdge>(
+        IDirectedGraph<TNodeId, TNode, TEdge> graph,
+        Func<TNode, TNodeId> nodeIdSelector,
+        Func<TEdge, bool>? edgePredicate = null)
+        where TEdge : IEdge<TNodeId>
+        where TNodeId : notnull
+    {
+        return null == edgePredicate
+            ? graph.Nodes.Except(graph.Edges.Select(e => e.Source), node => nodeIdSelector(node), nodeId => nodeId, node => node)
+            : graph.Nodes.Except(graph.Edges.Where(edgePredicate).Select(e => e.Source), node => nodeIdSelector(node), nodeId => nodeId, node => node);
     }
 }
 
