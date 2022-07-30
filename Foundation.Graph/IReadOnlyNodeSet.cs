@@ -45,7 +45,7 @@ public interface IReadOnlyNodeSet<TNodeId, TNode>
     /// </summary>
     /// <param name="nodeId"></param>
     /// <returns></returns>
-    Opt<TNode> GetNode(TNodeId nodeId);
+    Option<TNode> GetNode(TNodeId nodeId);
 
     /// <summary>
     /// Number of nodes.

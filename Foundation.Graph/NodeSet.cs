@@ -121,7 +121,7 @@ public class NodeSet<TNodeId, TNode> : INodeSet<TNodeId, TNode>
         CollectionChanged?.Invoke(sender, args);
     }
 
-    public Opt<TNode> GetNode(TNodeId nodeId) => TryGetNode(nodeId, out TNode? node) ? Opt.Some(node!) : Opt.None<TNode>();
+    public Option<TNode> GetNode(TNodeId nodeId) => TryGetNode(nodeId, out TNode? node) ? Option.Maybe(node) : Option.None<TNode>();
 
     public int NodeCount => _nodes.Value.Count;
 

@@ -157,11 +157,11 @@ public class EdgeSet<TNode, TEdgeId, TEdge> : IEdgeSet<TNode, TEdgeId, TEdge>
         CollectionChanged?.Invoke(this, args);
     }
 
-    public Opt<TEdge> GetEdge(TEdgeId edgeId)
+    public Option<TEdge> GetEdge(TEdgeId edgeId)
     {
-        if (_edges.Value.TryGetValue(edgeId, out TEdge? edge)) return Opt.Some(edge);
+        if (_edges.Value.TryGetValue(edgeId, out TEdge? edge)) return Option.Some(edge);
 
-        return Opt.None<TEdge>();
+        return Option.None<TEdge>();
     }
 
     public IEnumerable<TEdge> GetEdges([DisallowNull] TNode node) => _edges.Value.Values.Where(e => e.Source.Equals(node) || e.Target.Equals(node));
@@ -182,7 +182,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge> : IEdgeSet<TNode, TEdgeId, TEdge>
             var optionalEdge = GetEdge(edgeId);
             if (optionalEdge.IsNone) return false;
 
-            return RemoveEdge(optionalEdge.ValueOrThrow());
+            return RemoveEdge(optionalEdge.OrThrow());
         }
 
         return _edges.Value.Remove(edgeId);

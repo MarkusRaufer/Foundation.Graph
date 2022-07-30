@@ -375,7 +375,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         CollectionChanged?.Invoke(this, args);
     }
 
-    public Opt<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
+    public Option<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
 
     public IEnumerable<TEdge> GetEdges(TNode node) => EdgeSet.GetEdges(node);
 
@@ -414,7 +414,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         var edge = GetEdge(edgeId);
         if (edge.IsNone) return false;
 
-        return RemoveEdge(edge.ValueOrThrow());
+        return RemoveEdge(edge.OrThrow());
     }
 
     public bool RemoveEdge(TEdge edge)

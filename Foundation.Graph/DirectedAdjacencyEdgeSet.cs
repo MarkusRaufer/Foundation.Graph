@@ -282,7 +282,7 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         var optionalEdge = EdgeSet.GetEdge(edgeId);
         if (optionalEdge.IsNone) return false;
 
-        var edge = optionalEdge.ValueOrThrow();
+        var edge = optionalEdge.OrThrow();
         _adjacent.Remove(edge.Source, edge);
         _adjacent.Remove(edge.Target, edge);
 
@@ -310,5 +310,5 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 
     public bool ExistsEdge(TEdgeId edgeId) => EdgeSet.ExistsEdge(edgeId);
 
-    public Opt<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
+    public Option<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
 }

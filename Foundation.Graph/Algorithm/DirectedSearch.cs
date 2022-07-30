@@ -1,4 +1,5 @@
-﻿using Foundation.Collections.Generic;
+﻿using Foundation;
+using Foundation.Collections.Generic;
 using System.Linq;
 
 namespace Foundation.Graph.Algorithm;
@@ -110,15 +111,15 @@ public static class DirectedSearch
                   .Distinct();
     }
 
-    public static Opt<TParent> Parent<TNode, TEdge, TParent>(IDirectedGraph<TNode, TEdge> graph, TNode node)
+    public static Option<TParent> Parent<TNode, TEdge, TParent>(IDirectedGraph<TNode, TEdge> graph, TNode node)
                 where TEdge : IEdge<TNode>
     {
         return Bfs.IncomingNodes(graph, node)
                   .OfType<TParent>()
-                  .FirstAsOpt();
+                  .FirstAsOption();
     }
 
-    public static Opt<TParent> Parent<TNode, TEdge, TParent>(
+    public static Option<TParent> Parent<TNode, TEdge, TParent>(
                 IDirectedGraph<TNode, TEdge> graph,
                 TNode node,
                 Func<TNode, bool> stopPredicate)
@@ -126,7 +127,7 @@ public static class DirectedSearch
     {
         return Bfs.IncomingNodes(graph, node, null, stopPredicate)
                   .OfType<TParent>()
-                  .FirstAsOpt();
+                  .FirstAsOption();
     }
 
     public static IEnumerable<TNode> RootNodes<TNode, TEdge>(
@@ -169,8 +170,8 @@ public static class DirectedSearch
         where TNodeId : notnull
     {
         return null == edgePredicate
-            ? graph.Nodes.Except(graph.Edges.Select(e => e.Source), node => nodeIdSelector(node), nodeId => nodeId, node => node)
-            : graph.Nodes.Except(graph.Edges.Where(edgePredicate).Select(e => e.Source), node => nodeIdSelector(node), nodeId => nodeId, node => node);
+            ? graph.Nodes.ExceptBy(graph.Edges.Select(e => e.Source), node => nodeIdSelector(node), nodeId => nodeId, node => node)
+            : graph.Nodes.ExceptBy(graph.Edges.Where(edgePredicate).Select(e => e.Source), node => nodeIdSelector(node), nodeId => nodeId, node => node);
     }
 }
 

@@ -44,5 +44,5 @@ public interface IReadOnlyEdgeSet<in TNode, TEdgeId, TEdge> : IReadOnlyEdgeSet<T
     where TEdgeId : notnull
 {
     bool ExistsEdge(TEdgeId edgeId);
-    Opt<TEdge> GetEdge(TEdgeId edgeId);
+    Option<TEdge> GetEdge(TEdgeId edgeId);
 }

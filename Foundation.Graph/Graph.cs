@@ -325,7 +325,7 @@ namespace Foundation.Graph
             CollectionChanged?.Invoke(sender, args);
         }
 
-        public Opt<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
+        public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
 
         public IEnumerable<TEdge> GetEdges(TNodeId nodeId) => EdgeSet.GetEdges(nodeId);
 
@@ -491,11 +491,11 @@ namespace Foundation.Graph
             CollectionChanged?.Invoke(sender, args);
         }
 
-        public Opt<TEdge> GetEdge(TEdgeId id) => EdgeSet.GetEdge(id);
+        public Option<TEdge> GetEdge(TEdgeId id) => EdgeSet.GetEdge(id);
 
         public IEnumerable<TEdge> GetEdges(TNodeId node) => EdgeSet.GetEdges(node);
 
-        public Opt<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
+        public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
 
         public int NodeCount => NodeSet.NodeCount;
 
