@@ -39,11 +39,7 @@ public struct UndirectedEdge<TNode>
     public override bool Equals([NotNullWhen(true)] object? obj)
         => obj is UndirectedEdge<TNode> other && Equals(other);
 
-    public bool Equals(UndirectedEdge<TNode> other)
-    {
-        return Source.Equals(other.Source) && Target.Equals(other.Target)
-            || Source.Equals(other.Target) && Target.Equals(other.Source);
-    }
+    public bool Equals(UndirectedEdge<TNode> other) => this.EqualsUndirected<TNode, UndirectedEdge<TNode>>(other);
 
     public override int GetHashCode() => _hashCode;
 
