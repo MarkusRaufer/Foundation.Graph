@@ -246,6 +246,11 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
 
         return removed;
     }
+
+    public bool ExistsEdge(TNode source, TNode target)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
@@ -369,6 +374,11 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     public bool ExistsEdge(TEdgeId edgeId) => EdgeSet.ExistsEdge(edgeId);
 
     public bool ExistsEdge(TEdge edge) => EdgeSet.ExistsEdge(edge);
+
+    public bool ExistsEdge(TNode source, TNode target)
+    {
+        return EdgeSet.ExistsEdge(source, target);
+    }
 
     protected void FireCollectionChanged(NotifyCollectionChangedEventArgs args)
     {

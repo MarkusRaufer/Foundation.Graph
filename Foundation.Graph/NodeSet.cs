@@ -7,30 +7,23 @@ public class NodeSet<TNode> : INodeSet<TNode>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly ICollection<TNode> _nodes;
+    private readonly HashSet<TNode> _nodes;
 
     public NodeSet()
     {
         _nodes = new HashSet<TNode>();
     }
 
-    public NodeSet([DisallowNull] ICollection<TNode> nodes)
-    {
-        _nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
-    }
-
     public NodeSet([DisallowNull] IEnumerable<TNode> nodes)
     {
         if (null == nodes) throw new ArgumentNullException(nameof(nodes));
-        _nodes = new List<TNode>(nodes);
+        _nodes = new HashSet<TNode>(nodes);
     }
 
     public void AddNode([DisallowNull] TNode node)
     {
-        if (_nodes.Contains(node)) throw new NodeSetException($"node {node} exists");
-
-        _nodes.Add(node);
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node));
+        if(_nodes.Add(node))
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node));
     }
 
     public void AddNodes([DisallowNull] IEnumerable<TNode> nodes)

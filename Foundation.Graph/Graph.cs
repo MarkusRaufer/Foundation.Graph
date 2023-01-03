@@ -1,10 +1,7 @@
 ﻿using Foundation.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 
 namespace Foundation.Graph
 {
@@ -93,6 +90,11 @@ namespace Foundation.Graph
         public bool ExistsEdge(TEdge edge)
         {
             return EdgeSet.ExistsEdge(edge);
+        }
+
+        public bool ExistsEdge(TNode source, TNode target)
+        {
+            return EdgeSet.ExistsEdge(source, target);
         }
 
         public virtual bool RemoveEdge(TEdge edge)
@@ -315,6 +317,11 @@ namespace Foundation.Graph
             return EdgeSet.ExistsEdge(edge);
         }
 
+        public bool ExistsEdge(TNodeId source, TNodeId target)
+        {
+            return EdgeSet.ExistsEdge(source, target);
+        }
+
         public bool ExistsNode(TNodeId id)
         {
             return NodeSet.ExistsNode(id);
@@ -484,6 +491,8 @@ namespace Foundation.Graph
 
         public bool ExistsEdge(TEdgeId id) => EdgeSet.ExistsEdge(id);
 
+        public bool ExistsEdge(TNodeId source, TNodeId target) => EdgeSet.ExistsEdge(source, target);
+
         public bool ExistsNode(TNodeId id) => NodeSet.ExistsNode(id);
 
         protected void FireCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -530,7 +539,6 @@ namespace Foundation.Graph
         {
             EdgeSet.RemoveEdges(edges);
         }
-
 
         public void RemoveEdges(IEnumerable<TEdgeId> edgeIds) => EdgeSet.RemoveEdges(edgeIds);
 

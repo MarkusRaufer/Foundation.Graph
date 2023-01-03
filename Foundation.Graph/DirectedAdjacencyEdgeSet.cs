@@ -10,16 +10,16 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge> : IDirectedEdgeSet<TNode, TE
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiMap<TNode, TEdge> _edges;
+    private readonly MultiValueMap<TNode, TEdge> _edges;
 
     public DirectedAdjacencyEdgeSet()
     {
-        _edges = new MultiMap<TNode, TEdge>();
+        _edges = new MultiValueMap<TNode, TEdge>();
     }
 
     public DirectedAdjacencyEdgeSet([DisallowNull] IEnumerable<TEdge> edges)
     {
-        _edges = new MultiMap<TNode, TEdge>();
+        _edges = new MultiValueMap<TNode, TEdge>();
         foreach (var edge in edges)
             AddEdge(edge);
     }
@@ -60,6 +60,13 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge> : IDirectedEdgeSet<TNode, TE
     }
 
     public bool ExistsEdge(TEdge edge) => _edges.ContainsValue(edge);
+
+    public bool ExistsEdge(TNode source, TNode target)
+    {
+        if (!_edges.TryGetValues(source, out IEnumerable<TEdge> edges)) return false;
+
+        return edges.Any(x => x.Target.Equals(target));
+    }
 
     public IEnumerable<TEdge> GetEdges(TNode node)
     {
@@ -153,7 +160,7 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiMap<TNode, TEdge> _adjacent;
+    private readonly MultiValueMap<TNode, TEdge> _adjacent;
     private bool _disposed;
 
     public DirectedAdjacencyEdgeSet(TEdgeSet edgeSet)
@@ -309,6 +316,9 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     }
 
     public bool ExistsEdge(TEdgeId edgeId) => EdgeSet.ExistsEdge(edgeId);
+
+
+    public bool ExistsEdge(TNode source, TNode target) => EdgeSet.ExistsEdge(source, target);
 
     public Option<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
 }

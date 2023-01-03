@@ -1,39 +1,34 @@
 namespace Foundation.Graph;
 
 using Foundation.Collections;
-using NUnit.Framework;
 using System.Collections.Specialized;
 using System.Linq;
+using Xunit;
 
 public class EdgeSetTests
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
-
-    [Test]
+    [Fact]
     public void Ctor_ShouldBeEmpty_When_Allocated()
     {
         var sut = new EdgeSet<string, IEdge<string>>();
         
-        Assert.AreEqual(0, sut.EdgeCount);
+        Assert.Equal(0, sut.EdgeCount);
     }
 
-    [Test]
+    [Fact]
     public void AddEdge_Should_HaveOneEdge_When_IfItWasEmptyBefore()
     {
         var sut = new EdgeSet<string, IEdge<string>>();
         
         sut.AddEdge(Edge.New("a", "b"));
-        Assert.AreEqual(1, sut.EdgeCount);
+        Assert.Equal(1, sut.EdgeCount);
 
         var edge = sut.Edges.Single();
-        Assert.AreEqual("a", edge.Source);
-        Assert.AreEqual("b", edge.Target);
+        Assert.Equal("a", edge.Source);
+        Assert.Equal("b", edge.Target);
     }
 
-    [Test]
+    [Fact]
     public void CollectionChanged_Should_ThrowEvent_When_AddingAnEdge()
     {
         var sut = new EdgeSet<string, IEdge<string>>();
@@ -45,7 +40,7 @@ public class EdgeSetTests
         void onCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             calledCollectionChanged = true;
-            Assert.AreEqual(NotifyCollectionChangedAction.Add, e.Action);
+            Assert.Equal(NotifyCollectionChangedAction.Add, e.Action);
             if (null == e.NewItems || 0 == e.NewItems.Count)
             {
                 Assert.Fail("NewItems of NotifyCollectionChangedEventArgs was empty");
@@ -54,15 +49,15 @@ public class EdgeSetTests
 
             var newEdge = e.NewItems.CastTo<IEdge<string>>().Single();
 
-            Assert.AreEqual(NotifyCollectionChangedAction.Add, e.Action);
-            Assert.AreEqual(expectedEdge, newEdge);
+            Assert.Equal(NotifyCollectionChangedAction.Add, e.Action);
+            Assert.Equal(expectedEdge, newEdge);
         }
 
         sut.CollectionChanged += onCollectionChanged;
 
         sut.AddEdge(expectedEdge);
 
-        Assert.IsTrue(calledCollectionChanged);
+        Assert.True(calledCollectionChanged);
     }
 
     private void Sut_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -70,7 +65,7 @@ public class EdgeSetTests
         throw new System.NotImplementedException();
     }
 
-    [Test]
+    [Fact]
     public void RemoveEdge_Should_BeEmpty_When_RemovedLastEdgeWithIdentifier()
     {
         var sut = new EdgeSet<string, int, IEdge<int, string>>();
@@ -79,12 +74,12 @@ public class EdgeSetTests
         sut.AddEdge(edge);
 
         var removed = sut.RemoveEdge(3);
-        Assert.IsTrue(removed);
+        Assert.True(removed);
 
-        Assert.AreEqual(0, sut.EdgeCount);
+        Assert.Equal(0, sut.EdgeCount);
     }
 
-    [Test]
+    [Fact]
     public void RemoveEdge_Should_BeEmpty_When_RemovedLastEdgeWithoutIdentifier()
     {
         var sut = new EdgeSet<string, IEdge<string>>();
@@ -93,8 +88,8 @@ public class EdgeSetTests
         sut.AddEdge(edge);
 
         var removed = sut.RemoveEdge(edge);
-        Assert.IsTrue(removed);
+        Assert.True(removed);
 
-        Assert.AreEqual(0, sut.EdgeCount);
+        Assert.Equal(0, sut.EdgeCount);
     }
 }

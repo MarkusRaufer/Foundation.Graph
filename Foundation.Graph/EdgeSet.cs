@@ -2,7 +2,7 @@
 
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-
+using System.Linq;
 public class EdgeSet<TNode, TEdge> : IEdgeSet<TNode, TEdge>
     where TEdge : IEdge<TNode>
     where TNode : notnull
@@ -69,6 +69,11 @@ public class EdgeSet<TNode, TEdge> : IEdgeSet<TNode, TEdge>
     public IEnumerable<TEdge> Edges => _edges.Value;
 
     public bool ExistsEdge(TEdge edge) => _edges.Value.Contains(edge);
+
+    public bool ExistsEdge(TNode source, TNode target)
+    {
+        return _edges.Value.Any(x => x.Source.Equals(source) && x.Target.Equals(target));
+    }
 
     protected void FireCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
     {
@@ -151,6 +156,11 @@ public class EdgeSet<TNode, TEdgeId, TEdge> : IEdgeSet<TNode, TEdgeId, TEdge>
     public bool ExistsEdge(TEdgeId edgeId) => _edges.Value.ContainsKey(edgeId);
 
     public bool ExistsEdge(TEdge edge) => _edges.Value.Values.Any(e => e.Equals(edge));
+
+    public bool ExistsEdge(TNode source, TNode target)
+    {
+        return _edges.Value.Values.Any(x => x.Source.Equals(source) && x.Target.Equals(target));
+    }
 
     protected void FireCollectionChanged(NotifyCollectionChangedEventArgs args)
     {

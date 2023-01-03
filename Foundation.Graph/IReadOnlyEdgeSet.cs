@@ -26,6 +26,14 @@ public interface IReadOnlyEdgeSet<in TNode, TEdge>
     bool ExistsEdge(TEdge edge);
 
     /// <summary>
+    /// Checks if edge exists.
+    /// </summary>
+    /// <param name="source">source node</param>
+    /// <param name="target">target node</param>
+    /// <returns></returns>
+    bool ExistsEdge(TNode source, TNode target);
+
+    /// <summary>
     /// returns all edges the has a source or target of node.
     /// </summary>
     /// <param name="node"></param>

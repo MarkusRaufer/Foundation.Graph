@@ -1,16 +1,12 @@
+using FluentAssertions;
+
 namespace Foundation.Graph;
 
-using NUnit.Framework;
-using System.Linq;
 
 public class DirectedAdjacencyEdgeSetTests
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
 
-    [Test]
+    [Fact]
     public void IncomingNodes_Should_ReturnOnlyIncomingNodes_When_DefiningANode()
     {
         var sut = new DirectedAdjacencyEdgeSet<string, IEdge<string>>();
@@ -24,11 +20,12 @@ public class DirectedAdjacencyEdgeSetTests
         sut.AddEdge(Edge.New("d", "a"));
 
         var inOfA = sut.IncomingNodes("a").ToArray();
-        Assert.AreEqual(1, inOfA.Length);
-        Assert.AreEqual("d", inOfA[0]);
+
+        inOfA.Length.Should().Be(1);
+        inOfA.Contains("d");
     }
 
-    [Test]
+    [Fact]
     public void OutgoingNodes_Should_ReturnOnlyOutgoingNodes_When_DefiningANode()
     {
         var sut = new DirectedAdjacencyEdgeSet<string, IEdge<string>>();
@@ -42,9 +39,10 @@ public class DirectedAdjacencyEdgeSetTests
         sut.AddEdge(Edge.New("d", "a"));
 
         var outOfA = sut.OutgoingNodes("a").ToArray();
-        Assert.AreEqual(3, outOfA.Length);
-        CollectionAssert.Contains(outOfA, "b");
-        CollectionAssert.Contains(outOfA, "d");
-        CollectionAssert.Contains(outOfA, "e");
+
+        outOfA.Length.Should().Be(3);
+        outOfA.Contains("b");
+        outOfA.Contains("d");
+        outOfA.Contains("e");
     }
 }

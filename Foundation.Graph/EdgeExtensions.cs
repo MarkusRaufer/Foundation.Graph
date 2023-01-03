@@ -15,6 +15,13 @@ public static class EdgeExtensions
         yield return edge.Target;
     }
 
+    public static IEnumerable<TNode> GetNodesNotInEdge<TNode>(this IEdge<TNode> edge, TNode notNode)
+    {
+        if (!edge.Source.EqualsNullable(notNode)) yield return edge.Source;
+        if (!edge.Target.EqualsNullable(notNode)) yield return edge.Target;
+    }
+
+
     public static IEnumerable<TNode> GetNodesTargetSource<TNode>(this IEdge<TNode> edge)
     {
         yield return edge.Target;
