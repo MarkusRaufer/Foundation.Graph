@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Reference Include="Foundation">
-      <HintPath>..\..\Foundation\Foundation\Foundation6\bin\Debug\net6.0\Foundation.dll</HintPath>
+      <HintPath>..\..\Foundation\Foundation\Foundation6\bin\$(Configuration)\net6.0\Foundation.dll</HintPath>
     </Reference>
   </ItemGroup>
 
