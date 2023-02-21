@@ -36,7 +36,7 @@ public static class UndirectedSearch
                 var edges = edgeSet.GetEdges(n);
                 foreach (var edge in edges)
                 {
-                    if(visitedEdges.Contains(edge)) continue;
+                    if (visitedEdges.Contains(edge)) continue;
 
                     yield return edge;
                     visitedEdges.Add(edge);
@@ -92,7 +92,7 @@ public static class UndirectedSearch
             return ConnectedEdges(edgeSet, node).SelectMany(edge => edge.GetNodesWithout(node)).Distinct();
         }
 
-        public static IEnumerable<IEnumerable<TNode>> ConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+        public static IEnumerable<IEnumerable<TNode>> FindConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
@@ -104,56 +104,32 @@ public static class UndirectedSearch
         }
 
         /// <summary>
-        /// Finds all connected edges.
+        /// Returns a list of connected edge paths.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <typeparam name="TEdge"></typeparam>
         /// <param name="edgeSet"></param>
         /// <returns></returns>
         public static IEnumerable<IEnumerable<TEdge>> FindConnectedPaths<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
-            where TNode : notnull
-            where TEdge : IEdge<TNode>
+                where TNode : notnull
+                where TEdge : IEdge<TNode>
         {
+            var edges = new Queue<TEdge>();
             if (0 == edgeSet.EdgeCount) yield break;
 
-            var nodes = new Queue<TNode>();
-            var path = new List<TEdge>();
-
-            nodes.Enqueue(edgeSet.Edges.First().Source);
-
             var visitedEdges = new HashSet<TEdge>();
-            var visitedNodes = new HashSet<TNode>();
 
-            while (0 < nodes.Count)
+            while (edgeSet.EdgeCount != visitedEdges.Count)
             {
-                var node = nodes.Dequeue();
+                var edge = edgeSet.Edges.Except(visitedEdges).FirstOrDefault();
+                if (null == edge) break;
 
-                if (visitedNodes.Contains(node))
-                    continue;
+                visitedEdges.Add(edge);
+                var path = ConnectedEdges(edgeSet, edge);
 
-                visitedNodes.Add(node);
+                path.ForEach(x => visitedEdges.Add(x));
 
-                var connectionEdges = edgeSet.GetEdges(node);
-                foreach (var connectionEdge in connectionEdges)
-                {
-                    if (visitedEdges.Contains(connectionEdge)) continue;
-
-                    var otherNode = connectionEdge.GetOtherNode(node);
-                    nodes.Enqueue(otherNode);
-
-                    path.Add(connectionEdge);
-                    visitedEdges.Add(connectionEdge);
-                }
-
-                if (0 == nodes.Count)
-                {
-                    yield return path;
-
-                    path = new List<TEdge>();
-
-                    var notTraversedEdge = edgeSet.Edges.FirstAsOption(x => !visitedEdges.Contains(x));
-                    if (notTraversedEdge.IsSome) nodes.Enqueue(notTraversedEdge.OrThrow().Source);
-                }
+                yield return path;
             }
         }
 

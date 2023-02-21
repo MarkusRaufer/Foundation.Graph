@@ -250,7 +250,7 @@ public class UndirectedSearchTests
                 sut.AddEdge(edge);
             }
 
-            var paths = UndirectedSearch.Bfs.ConnectedNodes(sut).ToArray();
+            var paths = UndirectedSearch.Bfs.FindConnectedNodes(sut).ToArray();
 
             paths.Length.Should().Be(2);
             {
