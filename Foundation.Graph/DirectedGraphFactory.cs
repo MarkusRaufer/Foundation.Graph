@@ -21,7 +21,7 @@ public static class DirectedGraphFactory
 
         subGraph.AddNode(node);
         var outEdges = DirectedSearch.Bfs.OutgoingEdges(graph, node, edgePredicate);
-        var outNodes = outEdges.SelectMany(edge => edge.GetNodes()).Except(node);
+        var outNodes = outEdges.SelectMany(edge => edge.GetNodes()).Ignore(node);
         subGraph.AddNodes(outNodes);
         subGraph.AddEdges(outEdges);
 

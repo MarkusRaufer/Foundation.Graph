@@ -34,7 +34,7 @@ public interface IReadOnlyEdgeSet<in TNode, TEdge>
     bool ExistsEdge(TNode source, TNode target);
 
     /// <summary>
-    /// returns all edges the has a source or target of node.
+    /// Returns all edges that have node as source or destination.
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>

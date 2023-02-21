@@ -8,6 +8,33 @@ public class UndirectedSearchTests
     public class Bfs
     {
         [Fact]
+        public void ConnectedEdges_Should_Return5Edges_When_StartEdge_SourceIs4_And_TargetIs5()
+        {
+            var sut = new UndirectedEdgeSet<int, UndirectedEdge<int>>();
+
+            var edges = TestEdgeFactory.GetUndirectedEdges().ToArray();
+
+            foreach (var edge in edges)
+            {
+                sut.AddEdge(edge);
+            }
+
+            var connections = UndirectedSearch.Bfs.ConnectedEdges(sut, UndirectedEdge.New(4, 5)).ToArray();
+
+            connections.Length.Should().Be(5);
+
+            var expected = new[]
+            {
+                UndirectedEdge.New(3, 2),
+                UndirectedEdge.New(1, 2),
+                UndirectedEdge.New(2, 4),
+                UndirectedEdge.New(5, 4),
+                UndirectedEdge.New(6, 5),
+            };
+            connections.Should().Contain(expected);
+        }
+
+        [Fact]
         public void ConnectedEdges_Should_Return5Edges_When_StartNodeIs3()
         {
             var sut = new UndirectedEdgeSet<int, UndirectedEdge<int>>();
@@ -152,6 +179,21 @@ public class UndirectedSearchTests
         }
 
         [Fact]
+        public void EdgeCount_Should_Return10_When_10EdgesAdded()
+        {
+            var sut = new UndirectedEdgeSet<int, UndirectedEdge<int>>();
+
+            var edges = TestEdgeFactory.GetUndirectedEdges().ToArray();
+
+            foreach (var edge in edges)
+            {
+                sut.AddEdge(edge);
+            }
+
+            sut.EdgeCount.Should().Be(10);
+        }
+
+        [Fact]
         public void FindConnectedPaths_Should_Return2EdgePaths_When_2EdgePathsExist()
         {
             var sut = new UndirectedEdgeSet<int, UndirectedEdge<int>>();
@@ -197,7 +239,7 @@ public class UndirectedSearchTests
         }
 
         [Fact]
-        public void FindConnectedNodes_Should_Return2EdgePaths_When_2EdgePathsExist()
+        public void ConnectedNodes_Should_Return2EdgePaths_When_2EdgePathsExist()
         {
             var sut = new UndirectedEdgeSet<int, UndirectedEdge<int>>();
 
@@ -208,7 +250,7 @@ public class UndirectedSearchTests
                 sut.AddEdge(edge);
             }
 
-            var paths = UndirectedSearch.Bfs.FindConnectedNodes(sut).ToArray();
+            var paths = UndirectedSearch.Bfs.ConnectedNodes(sut).ToArray();
 
             paths.Length.Should().Be(2);
             {

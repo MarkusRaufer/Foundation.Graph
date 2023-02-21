@@ -1,5 +1,4 @@
 ﻿using Foundation.Collections.Generic;
-using System.Xml.Linq;
 
 namespace Foundation.Graph.Algorithm;
 
@@ -7,6 +6,14 @@ public static class UndirectedSearch
 {
     public static class Bfs
     {
+        /// <summary>
+        /// Returns all edges which are connected with a specific node.
+        /// </summary>
+        /// <typeparam name="TNode">Type of nodes.</typeparam>
+        /// <typeparam name="TEdge">Type of edges.</typeparam>
+        /// <param name="edgeSet">The edge set including the edges.</param>
+        /// <param name="node">The node whose edges are to be found.</param>
+        /// <returns>A list of edges.</returns>
         public static IEnumerable<TEdge> ConnectedEdges<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet, TNode node)
             where TNode : notnull
             where TEdge : IEdge<TNode>
@@ -34,60 +41,65 @@ public static class UndirectedSearch
                     yield return edge;
                     visitedEdges.Add(edge);
 
-                    var otherNode = edge.Source.Equals(n) ? edge.Target : edge.Source;
+                    var otherNode = edge.GetOtherNode(n);
                     nodes.Enqueue(otherNode);
                 }
             }
         }
 
+        public static IEnumerable<TEdge> ConnectedEdges<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet, TEdge edge)
+            where TNode : notnull
+            where TEdge : IEdge<TNode>
+        {
+            var edges = new Queue<TEdge>();
+            edges.Enqueue(edge);
+
+            var visitedEdges = new HashSet<TEdge>();
+
+            while (0 < edges.Count)
+            {
+                var e = edges.Dequeue();
+
+                if (visitedEdges.Contains(e))
+                    continue;
+
+                visitedEdges.Add(e);
+
+                yield return e;
+
+                var connectedEdges = edgeSet.GetEdges(e.Source).Concat(edgeSet.GetEdges(e.Target)).Ignore(e);
+                foreach (var connectedEdge in connectedEdges)
+                {
+                    if (visitedEdges.Contains(connectedEdge)) continue;
+
+                    edges.Enqueue(connectedEdge);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns all nodes which are connected with a specific node.
+        /// </summary>
+        /// <typeparam name="TNode">Type of nodes.</typeparam>
+        /// <typeparam name="TEdge">Type of edges.</typeparam>
+        /// <param name="edgeSet">The edge set including the edges.</param>
+        /// <param name="node">The node whose connected nodes are to be found.</param>
+        /// <returns>A list of nodes.</returns>
         public static IEnumerable<TNode> ConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet, TNode node)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
-            return ConnectedEdges(edgeSet, node).SelectMany(x => x.GetNodesNotInEdge(node)).Distinct();
+            return ConnectedEdges(edgeSet, node).SelectMany(edge => edge.GetNodesWithout(node)).Distinct();
         }
 
-        /// <summary>
-        /// returns all nodes with a single connection. The sequence is random.
-        /// </summary>
-        /// <typeparam name="TNode"></typeparam>
-        /// <typeparam name="TEdge"></typeparam>
-        /// <param name="edgeSet"></param>
-        /// <returns></returns>
-        public static IEnumerable<TNode> NodesWithSingleConnection<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
-            where TNode : notnull
-            where TEdge : IEdge<TNode>
-        {
-            var sources = edgeSet.Edges.GroupBy(x => x.Source);
-            var targets = edgeSet.Edges.GroupBy(x => x.Target);
-
-            var ignore = new HashSet<TNode>();
-            foreach(var source in sources)
-            {
-                if (targets.Any(x => x.Key.Equals(source.Key)))
-                {
-                    ignore.Add(source.Key);
-                    continue;
-                }
-
-                if (1 == source.Count()) yield return source.Key;
-            }
-            foreach (var target in targets)
-            {
-                if (ignore.Contains(target.Key)) continue;
-
-                if (1 == target.Count()) yield return target.Key;
-            }
-        }
-        public static IEnumerable<IEnumerable<TNode>> FindConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+        public static IEnumerable<IEnumerable<TNode>> ConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
             foreach (var path in FindConnectedPaths(edgeSet))
             {
                 yield return path.SelectMany(x => x.GetNodes<TNode, TEdge>())
-                                 .Distinct()
-                                 .ToArray();
+                                 .Distinct();
             }
         }
 
@@ -133,7 +145,7 @@ public static class UndirectedSearch
                     visitedEdges.Add(connectionEdge);
                 }
 
-                if(0 == nodes.Count)
+                if (0 == nodes.Count)
                 {
                     yield return path;
 
@@ -142,6 +154,93 @@ public static class UndirectedSearch
                     var notTraversedEdge = edgeSet.Edges.FirstAsOption(x => !visitedEdges.Contains(x));
                     if (notTraversedEdge.IsSome) nodes.Enqueue(notTraversedEdge.OrThrow().Source);
                 }
+            }
+        }
+
+        /// <summary>
+        /// returns all nodes with a single connection. The sequence is random.
+        /// </summary>
+        /// <typeparam name="TNode"></typeparam>
+        /// <typeparam name="TEdge"></typeparam>
+        /// <param name="edgeSet"></param>
+        /// <returns></returns>
+        public static IEnumerable<TNode> NodesWithSingleConnection<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+            where TNode : notnull
+            where TEdge : IEdge<TNode>
+        {
+            var sources = edgeSet.Edges.GroupBy(x => x.Source);
+            var targets = edgeSet.Edges.GroupBy(x => x.Target);
+
+            var ignore = new HashSet<TNode>();
+            foreach(var source in sources)
+            {
+                if (targets.Any(x => x.Key.Equals(source.Key)))
+                {
+                    ignore.Add(source.Key);
+                    continue;
+                }
+
+                if (1 == source.Count()) yield return source.Key;
+            }
+            foreach (var target in targets)
+            {
+                if (ignore.Contains(target.Key)) continue;
+
+                if (1 == target.Count()) yield return target.Key;
+            }
+        }
+
+        /// <summary>
+        /// Returns the neighbor nodes of node.
+        /// </summary>
+        /// <typeparam name="TNode"></typeparam>
+        /// <typeparam name="TEdge"></typeparam>
+        /// <param name="edgeSet"></param>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static IEnumerable<TNode> Neighbors<TNode, TEdge>(EdgeSet<TNode, TEdge> edgeSet, TNode node)
+            where TNode : notnull
+            where TEdge : IEdge<TNode>
+        {
+            return edgeSet.GetEdges(node).Select(x => x.GetOtherNode(node)).Distinct();
+        }
+
+        /// <summary>
+        /// returns tuples of nodes with their number of connections.
+        /// </summary>
+        /// <typeparam name="TNode"></typeparam>
+        /// <typeparam name="TEdge"></typeparam>
+        /// <param name="edgeSet"></param>
+        /// <returns></returns>
+        public static IEnumerable<(TNode node, int numberOfConnections)> NodesWithNumberOfConnections<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+            where TNode : notnull
+            where TEdge : IEdge<TNode>
+        {
+            var nodes = new HashSet<TNode>(edgeSet.Edges.SelectMany(x => x.GetNodes()));
+
+            foreach(var node in nodes)
+            {
+                var edges = edgeSet.GetEdges(node);
+                yield return (node, numberOfConnections: edges.Count());
+            }
+        }
+
+        /// <summary>
+        /// Returns all nodes which are not connected by a edge.
+        /// </summary>
+        /// <typeparam name="TNode">Type of nodes</typeparam>
+        /// <typeparam name="TEdge">Type of edges.</typeparam>
+        /// <param name="graph">Graph including the nodes and the edges.</param>
+        /// <returns>A list of nodes.</returns>
+        public static IEnumerable<TNode> UnconnectedNodes<TNode, TEdge>(IGraph<TNode, TEdge> graph)
+            where TNode : notnull
+            where TEdge : IEdge<TNode>
+        {
+            foreach (var node in graph.Nodes)
+            {
+                if (ConnectedEdges(graph, node).Any()) continue;
+
+                yield return node;
             }
         }
     }

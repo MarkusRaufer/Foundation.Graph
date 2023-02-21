@@ -107,7 +107,7 @@ public static class DirectedSearch
     {
         return Bfs.IncomingNodes(graph, node)
                   .Concat(graph.OutgoingNodes(node))
-                  .Except(node)
+                  .Ignore(node)
                   .Distinct();
     }
 
@@ -150,7 +150,7 @@ public static class DirectedSearch
         return Bfs.IncomingNodes(graph, node)
                   .SelectMany(i => graph.OutgoingNodes(i))
                   .IfEmpty(RootNodes(graph))
-                  .Except(node)
+                  .Ignore(node)
                   .Distinct();
     }
 

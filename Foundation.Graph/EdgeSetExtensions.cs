@@ -7,5 +7,11 @@ public static class EdgeSetExtensions
     {
         return edgeSet.Edges.Any(e => e.Source.EqualsNullable(node) || e.Target.EqualsNullable(node));
     }
+
+    public static IEnumerable<TNode> GetNodes<TNode, TEdge>(this IReadOnlyEdgeSet<TNode, TEdge> edgeSet)
+        where TEdge : IEdge<TNode>
+    {
+        return edgeSet.Edges.SelectMany(x => x.GetNodes()).Distinct();
+    }
 }
 

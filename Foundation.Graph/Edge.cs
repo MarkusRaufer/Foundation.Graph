@@ -15,7 +15,9 @@ public static class Edge
     }
 }
 
-public record struct Edge<TNode>(TNode Source, TNode Target) : IEdge<TNode>;
+public record Edge<TNode>(TNode Source, TNode Target) : IEdge<TNode>;
 
-public record struct Edge<TEdgeId, TNode>(TEdgeId Id, TNode Source, TNode Target) : IEdge<TEdgeId, TNode>
-                     where TEdgeId : notnull;
+public record Edge<TEdgeId, TNode>(TEdgeId Id, TNode Source, TNode Target) 
+    : Edge<TNode>(Source, Target)
+    , IEdge<TEdgeId, TNode>
+    where TEdgeId : notnull;

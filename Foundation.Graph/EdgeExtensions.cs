@@ -2,11 +2,20 @@
 
 public static class EdgeExtensions
 {
-    public static bool EqualsUndirected<TNode, TEdge>(this TEdge lhs, TEdge rhs)
+    public static bool EqualsUndirected<TNode, TEdge>(this TEdge? lhs, TEdge? rhs)
         where TEdge : IEdge<TNode>
     {
-        return lhs.Source.EqualsNullable(rhs.Source) && lhs.Target.EqualsNullable(rhs.Target)
-            || lhs.Source.EqualsNullable(rhs.Target) && lhs.Target.EqualsNullable(rhs.Source);
+        if (null == lhs) return null == rhs;
+        if (null == rhs) return false;
+        return lhs.EqualsUndirected(rhs.Source, rhs.Target);
+    }
+
+    public static bool EqualsUndirected<TNode, TEdge>(this TEdge? lhs, TNode source, TNode target)
+        where TEdge : IEdge<TNode>
+    {
+        if (null == lhs) return false;
+        return lhs.Source.EqualsNullable(source) && lhs.Target.EqualsNullable(target)
+            || lhs.Source.EqualsNullable(target) && lhs.Target.EqualsNullable(source);
     }
 
     public static IEnumerable<TNode> GetNodes<TNode>(this IEdge<TNode> edge)
@@ -22,13 +31,6 @@ public static class EdgeExtensions
         yield return edge.Target;
     }
 
-    public static IEnumerable<TNode> GetNodesNotInEdge<TNode>(this IEdge<TNode> edge, TNode notNode)
-    {
-        if (!edge.Source.EqualsNullable(notNode)) yield return edge.Source;
-        if (!edge.Target.EqualsNullable(notNode)) yield return edge.Target;
-    }
-
-
     public static IEnumerable<TNode> GetNodesTargetSource<TNode>(this IEdge<TNode> edge)
     {
         yield return edge.Target;
@@ -41,6 +43,13 @@ public static class EdgeExtensions
         yield return edge.Target;
         yield return edge.Source;
     }
+
+    public static IEnumerable<TNode> GetNodesWithout<TNode>(this IEdge<TNode> edge, TNode node)
+    {
+        if (!edge.Source.EqualsNullable(node)) yield return edge.Source;
+        if (!edge.Target.EqualsNullable(node)) yield return edge.Target;
+    }
+
 
     /// <summary>
     /// returns the opposite node of the edge. If node is Source, Target is returned otherwise Source.
@@ -57,7 +66,7 @@ public static class EdgeExtensions
         if (edge.Source.EqualsNullable(node)) return edge.Target;
         if (edge.Target.EqualsNullable(node)) return edge.Source;
 
-        throw new ArgumentOutOfRangeException($"node {node} not part of edge", nameof(node));
+        throw new ArgumentOutOfRangeException($"node {node} not part of the edge", nameof(node));
     }
 
     public static IEnumerable<TNode> GetUniqueNodes<TNode>(this IEdge<TNode> edge)

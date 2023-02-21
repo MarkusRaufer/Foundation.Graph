@@ -11,12 +11,11 @@ public static class UndirectedEdge
     }
 }
 
-public struct UndirectedEdge<TNode> 
+public class UndirectedEdge<TNode> 
     : IEdge<TNode>
     , IEquatable<UndirectedEdge<TNode>>
-    where TNode : notnull
 {
-    private int _hashCode;
+    private readonly int _hashCode;
 
     public UndirectedEdge(TNode source, TNode target)
     {
@@ -36,10 +35,9 @@ public struct UndirectedEdge<TNode>
         return !(left == right);
     }
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
-        => obj is UndirectedEdge<TNode> other && Equals(other);
+    public override bool Equals([NotNullWhen(true)] object? obj) => Equals(obj as UndirectedEdge<TNode>);
 
-    public bool Equals(UndirectedEdge<TNode> other) => this.EqualsUndirected<TNode, UndirectedEdge<TNode>>(other);
+    public bool Equals(UndirectedEdge<TNode>? other) => this.EqualsUndirected<TNode, UndirectedEdge<TNode>>(other);
 
     public override int GetHashCode() => _hashCode;
 
@@ -47,4 +45,45 @@ public struct UndirectedEdge<TNode>
     public TNode Target { get; }
 
     public override string ToString() => $"{Source}-{Target}";
+}
+
+public struct UndirectedEdge<TId, TNode>
+    : IEdge<TId, TNode>
+    , IEquatable<UndirectedEdge<TId, TNode>>
+    where TId : notnull
+    where TNode : notnull
+{
+    private readonly int _hashCode;
+
+    public UndirectedEdge(TId id, TNode source, TNode target)
+    {
+        Id = id;
+        Source = source;
+        Target = target;
+
+        _hashCode = HashCode.FromOrderedObject<object>(Id, Source, Target);
+    }
+
+    public static bool operator ==(UndirectedEdge<TId, TNode> left, UndirectedEdge<TId, TNode> right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(UndirectedEdge<TId, TNode> left, UndirectedEdge<TId, TNode> right)
+    {
+        return !(left == right);
+    }
+
+    public override bool Equals([NotNullWhen(true)] object? obj)
+        => obj is UndirectedEdge<TId, TNode> other && Equals(other);
+
+    public bool Equals(UndirectedEdge<TId, TNode> other) => this.EqualsUndirected<TNode, UndirectedEdge<TId, TNode>>(other);
+
+    public override int GetHashCode() => _hashCode;
+
+    public TId Id { get; }
+    public TNode Source { get; }
+    public TNode Target { get; }
+
+    public override string ToString() => $"Id: {Id}, {Source}-{Target}";
 }
