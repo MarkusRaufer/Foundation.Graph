@@ -178,7 +178,7 @@ public static class UndirectedSearch
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
-            return edgeSet.GetEdges(node).Select(x => x.GetOtherNode(node)).Distinct();
+            return edgeSet.GetEdges(node).Select(x => x.GetOtherNode(node)).Ignore(node).Distinct();
         }
 
         /// <summary>
