@@ -1,26 +1,23 @@
 ﻿namespace Foundation.Graph;
 
-public interface IGraph<TNode, TEdge>
+public interface IReadOnlyDirectedGraph<TNode, TEdge>
     : IReadOnlyGraph<TNode, TEdge>
-    , INodeSet<TNode>
-    , IEdgeSet<TNode, TEdge>
+    , IReadOnlyDirectedEdgeSet<TNode, TEdge>
     where TEdge : IEdge<TNode>
 {
 }
 
-public interface IGraph<TNodeId, TNode, TEdge>
+public interface IReadOnlyDirectedGraph<TNodeId, TNode, TEdge>
     : IReadOnlyGraph<TNodeId, TNode, TEdge>
-    , INodeSet<TNodeId, TNode>
-    , IEdgeSet<TNodeId, TEdge>
+    , IReadOnlyDirectedEdgeSet<TNodeId, TEdge>
     where TEdge : IEdge<TNodeId>
     where TNodeId : notnull
 {
 }
 
-public interface IGraph<TNodeId, TNode, TEdgeId, TEdge>
+public interface IReadOnlyDirectedGraph<TNodeId, TNode, TEdgeId, TEdge>
     : IReadOnlyGraph<TNodeId, TNode, TEdgeId, TEdge>
-    , INodeSet<TNodeId, TNode>
-    , IEdgeSet<TNodeId, TEdgeId, TEdge>
+    , IReadOnlyDirectedEdgeSet<TNodeId, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNodeId>
     where TEdgeId : notnull
     where TNodeId : notnull

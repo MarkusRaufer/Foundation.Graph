@@ -100,34 +100,34 @@ public static class DirectedSearch
         {
             return OutgoingEdges(edgeSet, node, predicate, stopPredicate).Select(e => e.Target);
         }
-    }
 
-    public static IEnumerable<TNode> Neighbors<TNode, TEdge>(IDirectedGraph<TNode, TEdge> graph, TNode node)
-                where TEdge : IEdge<TNode>
-    {
-        return Bfs.IncomingNodes(graph, node)
-                  .Concat(graph.OutgoingNodes(node))
-                  .Ignore(node)
-                  .Distinct();
-    }
+        public static IEnumerable<TNode> Neighbors<TNode, TEdge>(IDirectedGraph<TNode, TEdge> graph, TNode node)
+                    where TEdge : IEdge<TNode>
+        {
+            return Bfs.IncomingNodes(graph, node)
+                      .Concat(graph.OutgoingNodes(node))
+                      .Ignore(node)
+                      .Distinct();
+        }
 
-    public static Option<TParent> Parent<TNode, TEdge, TParent>(IDirectedGraph<TNode, TEdge> graph, TNode node)
-                where TEdge : IEdge<TNode>
-    {
-        return Bfs.IncomingNodes(graph, node)
-                  .OfType<TParent>()
-                  .FirstAsOption();
-    }
+        public static Option<TParent> Parent<TNode, TEdge, TParent>(IDirectedGraph<TNode, TEdge> graph, TNode node)
+                    where TEdge : IEdge<TNode>
+        {
+            return Bfs.IncomingNodes(graph, node)
+                      .OfType<TParent>()
+                      .FirstAsOption();
+        }
 
-    public static Option<TParent> Parent<TNode, TEdge, TParent>(
-                IDirectedGraph<TNode, TEdge> graph,
-                TNode node,
-                Func<TNode, bool> stopPredicate)
-                where TEdge : IEdge<TNode>
-    {
-        return Bfs.IncomingNodes(graph, node, null, stopPredicate)
-                  .OfType<TParent>()
-                  .FirstAsOption();
+        public static Option<TParent> Parent<TNode, TEdge, TParent>(
+                    IDirectedGraph<TNode, TEdge> graph,
+                    TNode node,
+                    Func<TNode, bool> stopPredicate)
+                    where TEdge : IEdge<TNode>
+        {
+            return Bfs.IncomingNodes(graph, node, null, stopPredicate)
+                      .OfType<TParent>()
+                      .FirstAsOption();
+        }
     }
 
     public static IEnumerable<TNode> RootNodes<TNode, TEdge>(
@@ -135,6 +135,25 @@ public static class DirectedSearch
         where TEdge : IEdge<TNode>
     {
         return graph.Nodes.Except(graph.Edges.Select(e => e.Target));
+    }
+
+    public static IEnumerable<TNode> RootNodes<TNodeId, TNode, TEdge>(
+        IDirectedGraph<TNodeId, TNode, TEdge> graph, Func<TNode, TNodeId> selector)
+        where TEdge : IEdge<TNodeId>
+        where TNodeId : notnull
+    {
+        var rootNodeIds = graph.Nodes.Select(selector).Except(graph.Edges.Select(e => e.Target));
+        return rootNodeIds.Select(graph.GetNode).SelectSome();
+    }
+
+    public static IEnumerable<TNode> RootNodes<TNodeId, TNode, TEdgeId, TEdge>(
+        IDirectedGraph<TNodeId, TNode, TEdgeId, TEdge> graph, Func<TNode, TNodeId> selector)
+        where TEdge : IEdge<TEdgeId, TNodeId>
+        where TEdgeId : notnull
+        where TNodeId : notnull
+    {
+        var rootNodeIds = graph.Nodes.Select(selector).Except(graph.Edges.Select(e => e.Target));
+        return rootNodeIds.Select(graph.GetNode).SelectSome();
     }
 
     public static IEnumerable<TNode> RootNodes<TNode, TEdge>(IDirectedGraph<TNode, TEdge> graph, Func<TEdge, bool> predicate)
