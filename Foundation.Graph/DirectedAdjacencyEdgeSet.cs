@@ -63,9 +63,9 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge> : IDirectedEdgeSet<TNode, TE
 
     public bool ExistsEdge(TNode source, TNode target)
     {
-        if (!_edges.TryGetValues(source, out IEnumerable<TEdge> edges)) return false;
+        if (!_edges.TryGetValues(source, out ICollection<TEdge>? edges)) return false;
 
-        return edges.Any(x => x.Target.Equals(target));
+        return edges!.Any(x => x.Target.Equals(target));
     }
 
     public IEnumerable<TEdge> GetEdges(TNode node)
