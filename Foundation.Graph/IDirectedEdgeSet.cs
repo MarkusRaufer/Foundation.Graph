@@ -12,6 +12,5 @@ public interface IDirectedEdgeSet<TNode, TEdgeId, TEdge>
     , IEdgeSet<TNode, TEdgeId, TEdge>
     , IReadOnlyDirectedEdgeSet<TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNode>
-    where TEdgeId : notnull
 {
 }

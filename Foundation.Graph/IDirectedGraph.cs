@@ -13,7 +13,6 @@ public interface IDirectedGraph<TNodeId, TNode, TEdge>
     , IDirectedEdgeSet<TNodeId, TEdge>
     , IReadOnlyDirectedGraph<TNodeId, TNode, TEdge>
     where TEdge : IEdge<TNodeId>
-    where TNodeId : notnull
 {
 }
 
@@ -22,7 +21,5 @@ public interface IDirectedGraph<TNodeId, TNode, TEdgeId, TEdge>
     , IDirectedEdgeSet<TNodeId, TEdgeId, TEdge>
     , IReadOnlyDirectedGraph<TNodeId, TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNodeId>
-    where TEdgeId : notnull
-    where TNodeId : notnull
 {
 }

@@ -52,7 +52,6 @@ public interface IEdgeSet<in TNode, TEdgeId, TEdge>
     : IEdgeSet<TNode, TEdge>
     , IReadOnlyEdgeSet<TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNode>
-    where TEdgeId : notnull
 {
     bool RemoveEdge([DisallowNull] TEdgeId edgeId);
     void RemoveEdges(IEnumerable<TEdgeId> edgeIds);

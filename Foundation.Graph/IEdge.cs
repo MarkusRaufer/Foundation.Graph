@@ -18,6 +18,5 @@ public interface IEdge<out TNode>
 public interface IEdge<TId, out TNode>
     : IEdge<TNode>
     , IIdentifiable<TId>
-    where TId : notnull
 {
 }

@@ -10,8 +10,7 @@ public interface IReadOnlyGraph<TNode, TEdge>
 public interface IReadOnlyGraph<TNodeId, TNode, TEdge> 
     : IReadOnlyNodeSet<TNodeId, TNode>
     , IReadOnlyEdgeSet<TNodeId, TEdge>
-     where TEdge : IEdge<TNodeId> 
-    where TNodeId : notnull
+    where TEdge : IEdge<TNodeId> 
 {
 }
 
@@ -19,7 +18,5 @@ public interface IReadOnlyGraph<TNodeId, TNode, TEdgeId, TEdge>
     : IReadOnlyNodeSet<TNodeId, TNode>
     , IReadOnlyEdgeSet<TNodeId, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNodeId>
-    where TEdgeId : notnull
-    where TNodeId : notnull
 {
 }

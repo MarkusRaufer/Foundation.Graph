@@ -31,7 +31,6 @@ public interface IReadOnlyNodeSet<TNode>
 /// </summary>
 /// <typeparam name="TNode"></typeparam>
 public interface IReadOnlyNodeSet<TNodeId, TNode>
-    where TNodeId : notnull
 {
     /// <summary>
     /// Returns true, if node exists.

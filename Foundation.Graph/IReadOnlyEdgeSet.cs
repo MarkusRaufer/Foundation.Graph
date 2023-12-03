@@ -49,7 +49,6 @@ public interface IReadOnlyEdgeSet<in TNode, TEdge>
 /// <typeparam name="TEdge"></typeparam>
 public interface IReadOnlyEdgeSet<in TNode, TEdgeId, TEdge> : IReadOnlyEdgeSet<TNode, TEdge>
     where TEdge : IEdge<TEdgeId, TNode>
-    where TEdgeId : notnull
 {
     bool ExistsEdge(TEdgeId edgeId);
     Option<TEdge> GetEdge(TEdgeId edgeId);

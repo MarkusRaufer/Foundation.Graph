@@ -40,7 +40,6 @@ public interface INodeSet<TNode>
 public interface INodeSet<TNodeId, TNode>
     : IReadOnlyNodeSet<TNodeId, TNode>
     , INotifyCollectionChanged
-    where TNodeId : notnull
 {
     /// <summary>
     /// adds a node.
