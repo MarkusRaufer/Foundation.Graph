@@ -109,9 +109,9 @@ public class DirectedGraph<TNodeId, TNode, TEdge, TNodeSet, TEdgeSet>
     : Graph<TNodeId, TNode, TEdge, TNodeSet, TEdgeSet>
     , IDirectedGraph<TNodeId, TNode, TEdge>
     where TEdge : IEdge<TNodeId>
+    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdge>
     where TNodeId : notnull
     where TNodeSet : INodeSet<TNodeId, TNode>
-    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdge>
 {
     public DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet)
         : base(nodeSet, edgeSet)
@@ -144,9 +144,9 @@ public abstract class DirectedGraph<TNodeId, TNode, TEdgeId, TEdge, TNodeSet, TE
     , IDirectedGraph<TNodeId, TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNodeId>
     where TEdgeId : notnull
+    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdgeId, TEdge>
     where TNodeId : notnull
     where TNodeSet : INodeSet<TNodeId, TNode>
-    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdgeId, TEdge>
 {
     protected DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet)
         : base(nodeSet, edgeSet)

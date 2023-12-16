@@ -48,6 +48,12 @@ public interface INodeSet<TNodeId, TNode>
     void AddNode([DisallowNull] TNodeId nodeId, [DisallowNull] TNode node);
 
     /// <summary>
+    /// adds a list of nodes to the node set.
+    /// </summary>
+    /// <param name="nodes">list of nodes.</param>
+    void AddNodes(IEnumerable<(TNodeId, TNode)> nodes);
+
+    /// <summary>
     /// clears the node list.
     /// </summary>
     void ClearNodes();

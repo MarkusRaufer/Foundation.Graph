@@ -20,7 +20,9 @@ public static class DirectedGraphFactory
         var subGraph = factory();
 
         subGraph.AddNode(node);
-        var outEdges = DirectedSearch.Bfs.OutgoingEdges(graph, node, edgePredicate);
+
+        //TODO: int.MaxValue
+        var outEdges = DirectedSearch.Bfs.OutgoingEdges(graph, node, int.MaxValue, edgePredicate);
         var outNodes = outEdges.SelectMany(edge => edge.GetNodes()).Ignore(node);
         subGraph.AddNodes(outNodes);
         subGraph.AddEdges(outEdges);
@@ -56,7 +58,7 @@ public static class DirectedGraphFactory
             if (null == node) continue;
 
             subGraph.AddNode(node);
-            var outEdges = DirectedSearch.Bfs.OutgoingEdges(graph, node, edgePredicate);
+            var outEdges = DirectedSearch.Bfs.OutgoingEdges(graph, node, int.MaxValue, edgePredicate);
             var outNodes = outEdges.SelectMany(edge => edge.GetNodes()).Except(nodes);
             subGraph.AddNodes(outNodes);
             subGraph.AddEdges(outEdges);

@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace Foundation.Graph
 {
@@ -261,7 +262,13 @@ namespace Foundation.Graph
         {
             NodeSet.AddNode(nodeId, node);
         }
-        
+
+
+        public virtual void AddNodes(IEnumerable<(TNodeId, TNode)> nodes)
+        {
+            NodeSet.AddNodes(nodes);
+        }
+
         /// <summary>
         /// If set to false, an exception will be thrown on adding an existing edge.
         /// </summary>
@@ -463,6 +470,11 @@ namespace Foundation.Graph
         public virtual void AddNode(TNodeId nodeId, [DisallowNull] TNode node)
         {
             NodeSet.AddNode(nodeId, node);
+        }
+
+        public virtual void AddNodes(IEnumerable<(TNodeId, TNode)> nodes)
+        {
+            NodeSet.AddNodes(nodes);
         }
 
         /// <summary>

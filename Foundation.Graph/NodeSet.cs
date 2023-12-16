@@ -98,6 +98,16 @@ public class NodeSet<TNodeId, TNode> : INodeSet<TNodeId, TNode>
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node));
     }
 
+    public void AddNodes(IEnumerable<(TNodeId, TNode)> nodes)
+    {
+        foreach (var (nodeId, node) in nodes)
+        {
+            if (nodeId is null || node is null) continue;
+
+            AddNode(nodeId, node);
+        }
+    }
+
     public void ClearNodes()
     {
         _nodes.Value.Clear();

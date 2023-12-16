@@ -1,6 +1,5 @@
 ﻿using Foundation;
 using Foundation.Collections.Generic;
-using System.Linq;
 
 namespace Foundation.Graph.Algorithm;
 
@@ -11,37 +10,43 @@ public static class DirectedSearch
     /// </summary>
     public static class Bfs
     {
+        private record NodeDepth<TNode>(TNode Node, int SearchDepth);
+
         public static IEnumerable<TEdge> IncomingEdges<TNode, TEdge>(
           IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
           TNode node,
+          int searchDepth = int.MaxValue,
           Func<TEdge, bool>? predicate = null,
           Func<TNode, bool>? stopPredicate = null)
           where TEdge : IEdge<TNode>
         {
-            var nodes = new Queue<TNode>();
-            nodes.Enqueue(node);
+            var nodes = new Queue<NodeDepth<TNode>>();
+            nodes.Enqueue(new NodeDepth<TNode>(node, 1));
 
             var visitedEdges = new HashSet<TEdge>();
             var visitedNodes = new HashSet<TNode>();
             while (0 < nodes.Count)
             {
                 var n = nodes.Dequeue();
-                if (null != stopPredicate && stopPredicate(n))
+
+                if (n.SearchDepth == searchDepth) yield break;
+
+                if (null != stopPredicate && stopPredicate(n.Node))
                     yield break;
 
-                if (visitedNodes.Contains(n))
+                if (visitedNodes.Contains(n.Node))
                     continue;
 
-                visitedNodes.Add(n);
+                visitedNodes.Add(n.Node);
                 var inEdges = (null == predicate)
-                    ? edgeSet.IncomingEdges(n).Except(visitedEdges)
-                    : edgeSet.IncomingEdges(n).Where(predicate).Except(visitedEdges);
+                    ? edgeSet.IncomingEdges(n.Node).Except(visitedEdges)
+                    : edgeSet.IncomingEdges(n.Node).Where(predicate).Except(visitedEdges);
 
                 foreach (var inEdge in inEdges)
                 {
                     yield return inEdge;
                     visitedEdges.Add(inEdge);
-                    nodes.Enqueue(inEdge.Source);
+                    nodes.Enqueue(new NodeDepth<TNode>(inEdge.Source, n.SearchDepth + 1));
                 }
             }
         }
@@ -49,44 +54,50 @@ public static class DirectedSearch
         public static IEnumerable<TNode> IncomingNodes<TNode, TEdge>(
             IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
+            int searchDepth = int.MaxValue,
             Func<TEdge, bool>? predicate = null,
             Func<TNode, bool>? stopPredicate = null)
             where TEdge : IEdge<TNode>
         {
-            return IncomingEdges(edgeSet, node, predicate, stopPredicate).Select(e => e.Source);
+            return IncomingEdges(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => e.Source);
         }
 
         public static IEnumerable<TEdge> OutgoingEdges<TNode, TEdge>(
             IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
+            int searchDepth = int.MaxValue,
             Func<TEdge, bool>? predicate = null,
             Func<TNode, bool>? stopPredicate = null)
             where TEdge : IEdge<TNode>
         {
-            var nodes = new Queue<TNode>();
-            nodes.Enqueue(node);
+            var nodes = new Queue<NodeDepth<TNode>>();
+            nodes.Enqueue(new NodeDepth<TNode>(node, 0));
 
             var visitedEdges = new HashSet<TEdge>();
             var visitedNodes = new HashSet<TNode>();
+
             while (0 < nodes.Count)
             {
                 var n = nodes.Dequeue();
-                if (null != stopPredicate && stopPredicate(n))
-                    yield break;
 
-                if (visitedNodes.Contains(n))
+                if (n.SearchDepth == searchDepth) yield break;
+
+                if (null != stopPredicate && stopPredicate(n.Node)) yield break;
+
+                if (visitedNodes.Contains(n.Node))
                     continue;
 
-                visitedNodes.Add(n);
+                visitedNodes.Add(n.Node);
+
                 var outEdges = (null == predicate)
-                    ? edgeSet.OutgoingEdges(n).Except(visitedEdges)
-                    : edgeSet.OutgoingEdges(n).Where(predicate).Except(visitedEdges);
+                    ? edgeSet.OutgoingEdges(n.Node).Except(visitedEdges)
+                    : edgeSet.OutgoingEdges(n.Node).Where(predicate).Except(visitedEdges);
 
                 foreach (var outEdge in outEdges)
                 {
                     yield return outEdge;
                     visitedEdges.Add(outEdge);
-                    nodes.Enqueue(outEdge.Target);
+                    nodes.Enqueue(new NodeDepth<TNode>(outEdge.Target, n.SearchDepth + 1));
                 }
             }
         }
@@ -94,11 +105,13 @@ public static class DirectedSearch
         public static IEnumerable<TNode> OutgoingNodes<TNode, TEdge>(
             IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
+            int searchDepth = int.MaxValue,
             Func<TEdge, bool>? predicate = null,
             Func<TNode, bool>? stopPredicate = null)
             where TEdge : IEdge<TNode>
         {
-            return OutgoingEdges(edgeSet, node, predicate, stopPredicate).Select(e => e.Target);
+            // TODO: int.MaxValue
+            return OutgoingEdges(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => e.Target);
         }
 
         public static IEnumerable<TNode> Neighbors<TNode, TEdge>(IDirectedGraph<TNode, TEdge> graph, TNode node)
@@ -121,10 +134,11 @@ public static class DirectedSearch
         public static Option<TParent> Parent<TNode, TEdge, TParent>(
                     IDirectedGraph<TNode, TEdge> graph,
                     TNode node,
-                    Func<TNode, bool> stopPredicate)
+                    Func<TNode, bool> stopPredicate,
+                    int searchDepth = int.MaxValue)
                     where TEdge : IEdge<TNode>
         {
-            return Bfs.IncomingNodes(graph, node, null, stopPredicate)
+            return Bfs.IncomingNodes(graph, node, searchDepth, null, stopPredicate)
                       .OfType<TParent>()
                       .FirstAsOption();
         }
