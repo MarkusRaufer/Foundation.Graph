@@ -4,7 +4,9 @@ using Foundation.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 
-public class DirectedAdjacencyEdgeSet<TNode, TEdge> : IDirectedEdgeSet<TNode, TEdge>
+public class DirectedAdjacencyEdgeSet<TNode, TEdge>
+    : IDirectedEdgeSet<TNode, TEdge>
+    , INotifyCollectionChanged
     where TEdge : IEdge<TNode>
     where TNode : notnull
 {
@@ -152,10 +154,11 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge> : DirectedAdjacency
 
 public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet> 
     : IDirectedEdgeSet<TNode, TEdgeId, TEdge>
+    , INotifyCollectionChanged
     , IDisposable
     where TEdge : IEdge<TEdgeId, TNode>
     where TEdgeId : notnull
-    where TEdgeSet : IEdgeSet<TNode, TEdgeId, TEdge>
+    where TEdgeSet : IEdgeSet<TNode, TEdgeId, TEdge>, INotifyCollectionChanged
     where TNode : notnull
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;

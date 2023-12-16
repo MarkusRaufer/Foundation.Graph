@@ -3,7 +3,10 @@
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 
-public class NodeSet<TNode> : INodeSet<TNode>
+public class NodeSet<TNode> 
+    : INodeSet<TNode>
+    , INotifyCollectionChanged
+    where TNode : notnull
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
@@ -67,7 +70,10 @@ public class NodeSet<TNode> : INodeSet<TNode>
     }
 }
 
-public class NodeSet<TNodeId, TNode> : INodeSet<TNodeId, TNode>
+public class NodeSet<TNodeId, TNode>
+    : INodeSet<TNodeId, TNode>
+    , INotifyCollectionChanged
+    where TNode : notnull
     where TNodeId : notnull
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
@@ -89,7 +95,7 @@ public class NodeSet<TNodeId, TNode> : INodeSet<TNodeId, TNode>
         _nodes = nodes.ThrowIfNull(nameof(nodes));
     }
 
-    public void AddNode(TNodeId nodeId, [DisallowNull] TNode node)
+    public void AddNode(TNodeId nodeId, TNode node)
     {
         if (ExistsNode(nodeId))
             throw new NodeSetException($"node {node} exists");
@@ -145,8 +151,8 @@ public class NodeSet<TNodeId, TNode> : INodeSet<TNodeId, TNode>
             RemoveNode(node);
     }
 
-    public bool TryGetNode(TNodeId nodeId, out TNode? node)
+    public bool TryGetNode(TNodeId nodeId, [NotNullWhen(true)] out TNode? node)
     {
-        return _nodes.Value.TryGetValue(nodeId, out node);
+        return _nodes.Value.TryGetValue(nodeId, out node) && node is not null;
     }
 }

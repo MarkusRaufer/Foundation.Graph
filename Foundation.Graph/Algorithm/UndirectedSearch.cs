@@ -14,7 +14,7 @@ public static class UndirectedSearch
         /// <param name="edgeSet">The edge set including the edges.</param>
         /// <param name="node">The node whose edges are to be found.</param>
         /// <returns>A list of edges.</returns>
-        public static IEnumerable<TEdge> ConnectedEdges<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet, TNode node)
+        public static IEnumerable<TEdge> ConnectedEdges<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet, TNode node)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
@@ -47,7 +47,7 @@ public static class UndirectedSearch
             }
         }
 
-        public static IEnumerable<TEdge> ConnectedEdges<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet, TEdge edge)
+        public static IEnumerable<TEdge> ConnectedEdges<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet, TEdge edge)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
@@ -85,14 +85,14 @@ public static class UndirectedSearch
         /// <param name="edgeSet">The edge set including the edges.</param>
         /// <param name="node">The node whose connected nodes are to be found.</param>
         /// <returns>A list of nodes.</returns>
-        public static IEnumerable<TNode> ConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet, TNode node)
+        public static IEnumerable<TNode> ConnectedNodes<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet, TNode node)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
             return ConnectedEdges(edgeSet, node).SelectMany(edge => edge.GetNodesWithout(node)).Distinct();
         }
 
-        public static IEnumerable<IEnumerable<TNode>> FindConnectedNodes<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+        public static IEnumerable<IEnumerable<TNode>> FindConnectedNodes<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
@@ -110,7 +110,7 @@ public static class UndirectedSearch
         /// <typeparam name="TEdge"></typeparam>
         /// <param name="edgeSet"></param>
         /// <returns></returns>
-        public static IEnumerable<IEnumerable<TEdge>> FindConnectedPaths<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+        public static IEnumerable<IEnumerable<TEdge>> FindConnectedPaths<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet)
                 where TNode : notnull
                 where TEdge : IEdge<TNode>
         {
@@ -140,7 +140,7 @@ public static class UndirectedSearch
         /// <typeparam name="TEdge"></typeparam>
         /// <param name="edgeSet"></param>
         /// <returns></returns>
-        public static IEnumerable<TNode> NodesWithSingleConnection<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+        public static IEnumerable<TNode> NodesWithSingleConnection<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {
@@ -188,7 +188,7 @@ public static class UndirectedSearch
         /// <typeparam name="TEdge"></typeparam>
         /// <param name="edgeSet"></param>
         /// <returns></returns>
-        public static IEnumerable<(TNode node, int numberOfConnections)> NodesWithNumberOfConnections<TNode, TEdge>(IEdgeSet<TNode, TEdge> edgeSet)
+        public static IEnumerable<(TNode node, int numberOfConnections)> NodesWithNumberOfConnections<TNode, TEdge>(IReadOnlyEdgeSet<TNode, TEdge> edgeSet)
             where TNode : notnull
             where TEdge : IEdge<TNode>
         {

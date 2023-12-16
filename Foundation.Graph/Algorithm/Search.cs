@@ -5,7 +5,7 @@ namespace Foundation.Graph.Algorithm
     public static class Search
     {
         public static IEnumerable<TEdge> IncomingEdges<TNode, TEdge>(
-            IEdgeSet<TNode, TEdge> edgeSet,
+            IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
             Func<TEdge, bool>? predicate = null)
             where TEdge : IEdge<TNode>
@@ -16,7 +16,7 @@ namespace Foundation.Graph.Algorithm
         }
 
         public static IEnumerable<TNode> IncomingNodes<TNode, TEdge>(
-            IEdgeSet<TNode, TEdge> edgeSet,
+            IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
             Func<TEdge, bool>? predicate = null)
             where TEdge : IEdge<TNode>
@@ -25,7 +25,7 @@ namespace Foundation.Graph.Algorithm
         }
 
         public static IEnumerable<TEdge> OutgoingEdges<TNode, TEdge>(
-            IEdgeSet<TNode, TEdge> edgeSet,
+            IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
             Func<TEdge, bool>? predicate = null)
             where TEdge : IEdge<TNode>
@@ -36,7 +36,7 @@ namespace Foundation.Graph.Algorithm
         }
 
         public static IEnumerable<TNode> OutgoingNodes<TNode, TEdge>(
-            IEdgeSet<TNode, TEdge> edgeSet,
+            IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
             Func<TEdge, bool>? predicate = null)
             where TEdge : IEdge<TNode>
@@ -50,7 +50,7 @@ namespace Foundation.Graph.Algorithm
         public static class Bfs
         {
             public static IEnumerable<TEdge> IncomingEdges<TNode, TEdge>(
-                IEdgeSet<TNode, TEdge> edgeSet,
+                IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
                 TNode node,
                 Func<TEdge, bool>? predicate = null,
                 Func<TNode, bool>? stopPredicate = null)
@@ -82,7 +82,7 @@ namespace Foundation.Graph.Algorithm
             }
 
             public static IEnumerable<TNode> IncomingNodes<TNode, TEdge>(
-                IEdgeSet<TNode, TEdge> edgeSet,
+                IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
                 TNode node,
                 Func<TEdge, bool>? predicate = null,
                 Func<TNode, bool>? stopPredicate = null)
@@ -103,7 +103,7 @@ namespace Foundation.Graph.Algorithm
             /// <param name="stopPredicate">Stops searching if predicate is true. The node of the predicate is included as target node.</param>
             /// <returns></returns>
             public static IEnumerable<TEdge> OutgoingEdges<TNode, TEdge>(
-                IEdgeSet<TNode, TEdge> edgeSet,
+                IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
                 TNode node,
                 Func<TEdge, bool>? predicate = null,
                 Func<TNode, bool>? stopPredicate = null)
@@ -145,7 +145,7 @@ namespace Foundation.Graph.Algorithm
             /// <param name="stopPredicate">Stops searching if predicate is true. The node of the predicate is included as target node.</param>
             /// <returns></returns>
             public static IEnumerable<TNode> OutgoingNodes<TNode, TEdge>(
-                IEdgeSet<TNode, TEdge> edgeSet,
+                IReadOnlyEdgeSet<TNode, TEdge> edgeSet,
                 TNode node,
                 Func<TEdge, bool>? predicate = null,
                 Func<TNode, bool>? stopPredicate = null)

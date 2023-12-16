@@ -7,9 +7,8 @@ public interface IDirectedEdgeSet<TNode, TEdge>
 {
 }
 
-public interface IDirectedEdgeSet<TNode, TEdgeId, TEdge> 
-    : IDirectedEdgeSet<TNode, TEdge>
-    , IEdgeSet<TNode, TEdgeId, TEdge>
+public interface IDirectedEdgeSet<TNode, TEdgeId, TEdge>
+    : IEdgeSet<TNode, TEdgeId, TEdge>
     , IReadOnlyDirectedEdgeSet<TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNode>
 {

@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using System.Xml.Linq;
 
 namespace Foundation.Graph
 {
@@ -110,7 +109,7 @@ namespace Foundation.Graph
         #endregion IEdgeSet members
 
         #region INodeSet members
-        public virtual void AddNode([DisallowNull] TNode node)
+        public virtual void AddNode(TNode node)
         {
             NodeSet.AddNode(node);
         }
@@ -120,7 +119,7 @@ namespace Foundation.Graph
             NodeSet.AddNodes(nodes);
         }
 
-        public bool ExistsNode([DisallowNull] TNode node)
+        public bool ExistsNode(TNode node)
         {
             return NodeSet.ExistsNode(node);
         }
@@ -203,9 +202,10 @@ namespace Foundation.Graph
         : IGraph<TNodeId, TNode, TEdge>
         , IDisposable
         where TEdge : IEdge<TNodeId>
+        where TEdgeSet : IEdgeSet<TNodeId, TEdge>, INotifyCollectionChanged
+        where TNode : notnull
         where TNodeId : notnull
         where TNodeSet : INodeSet<TNodeId, TNode>, INotifyCollectionChanged
-        where TEdgeSet : IEdgeSet<TNodeId, TEdge>, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
         public event NotifyCollectionChangedEventHandler? NodeSetChanged;
@@ -467,7 +467,7 @@ namespace Foundation.Graph
             EdgeSet.AddEdges(edges);
         }
 
-        public virtual void AddNode(TNodeId nodeId, [DisallowNull] TNode node)
+        public virtual void AddNode(TNodeId nodeId, TNode node)
         {
             NodeSet.AddNode(nodeId, node);
         }
@@ -545,7 +545,7 @@ namespace Foundation.Graph
         {
             return EdgeSet.RemoveEdge(edge);
         }
-        public bool RemoveEdge([DisallowNull] TEdgeId edgeId) => EdgeSet.RemoveEdge(edgeId);
+        public bool RemoveEdge(TEdgeId edgeId) => EdgeSet.RemoveEdge(edgeId);
 
         public virtual void RemoveEdges(IEnumerable<TEdge> edges)
         {
@@ -562,7 +562,7 @@ namespace Foundation.Graph
                 RemoveNode(node);
         }
 
-        public bool TryGetNode(TNodeId nodeId, [MaybeNullWhen(false)] out TNode? node)
+        public bool TryGetNode(TNodeId nodeId, [NotNullWhen(true)] out TNode? node)
         {
             return NodeSet.TryGetNode(nodeId, out node);
         }

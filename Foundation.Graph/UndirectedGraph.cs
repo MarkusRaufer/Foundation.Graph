@@ -11,8 +11,8 @@ public class UndirectedGraph<TNode, TEdge>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly IEdgeSet<TNode, TEdge> _edgeSet;
-    private readonly INodeSet<TNode> _nodeSet;
+    private readonly UndirectedEdgeSet<TNode, TEdge> _edgeSet;
+    private readonly NodeSet<TNode> _nodeSet;
 
     public UndirectedGraph()
     {

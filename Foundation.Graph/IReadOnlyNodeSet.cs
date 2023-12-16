@@ -1,7 +1,5 @@
 ﻿namespace Foundation.Graph;
 
-using System.Diagnostics.CodeAnalysis;
-
 /// <summary>
 /// Interface for a set of nodes.
 /// </summary>
@@ -13,7 +11,7 @@ public interface IReadOnlyNodeSet<TNode>
     /// </summary>
     /// <param name="node">Node which is searched.</param>
     /// <returns></returns>
-    bool ExistsNode([DisallowNull] TNode node);
+    bool ExistsNode(TNode node);
 
     /// <summary>
     /// Number of nodes.
@@ -61,5 +59,5 @@ public interface IReadOnlyNodeSet<TNodeId, TNode>
     /// </summary>
     IEnumerable<TNode> Nodes { get; }
 
-    bool TryGetNode(TNodeId nodeId, [MaybeNullWhen(false)] out TNode? node);
+    bool TryGetNode(TNodeId nodeId, out TNode? node);
 }

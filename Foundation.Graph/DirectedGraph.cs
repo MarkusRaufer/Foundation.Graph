@@ -1,6 +1,7 @@
 ﻿namespace Foundation.Graph;
 
 using Foundation.Graph.Algorithm;
+using System.Collections.Specialized;
 
 public class DirectedGraph<TNode, TEdge>
     : DirectedGraph<TNode, TEdge, NodeSet<TNode>, DirectedEdgeSet<TNode, TEdge>>
@@ -28,8 +29,8 @@ public class DirectedGraph<TNode, TEdge, TNodeSet, TEdgeSet>
     : Graph<TNode, TEdge, TNodeSet, TEdgeSet>
     , IDirectedGraph<TNode, TEdge>
     where TEdge : IEdge<TNode>
-    where TNodeSet : INodeSet<TNode>
-    where TEdgeSet : IDirectedEdgeSet<TNode, TEdge>
+    where TNodeSet : INodeSet<TNode>, INotifyCollectionChanged
+    where TEdgeSet : IDirectedEdgeSet<TNode, TEdge>, INotifyCollectionChanged
 {
     public DirectedGraph(TNodeSet nodes, TEdgeSet edges)
         : base(nodes, edges)
@@ -109,9 +110,10 @@ public class DirectedGraph<TNodeId, TNode, TEdge, TNodeSet, TEdgeSet>
     : Graph<TNodeId, TNode, TEdge, TNodeSet, TEdgeSet>
     , IDirectedGraph<TNodeId, TNode, TEdge>
     where TEdge : IEdge<TNodeId>
-    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdge>
+    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdge>, INotifyCollectionChanged
+    where TNode : notnull
     where TNodeId : notnull
-    where TNodeSet : INodeSet<TNodeId, TNode>
+    where TNodeSet : INodeSet<TNodeId, TNode>, INotifyCollectionChanged
 {
     public DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet)
         : base(nodeSet, edgeSet)
@@ -144,9 +146,9 @@ public abstract class DirectedGraph<TNodeId, TNode, TEdgeId, TEdge, TNodeSet, TE
     , IDirectedGraph<TNodeId, TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNodeId>
     where TEdgeId : notnull
-    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdgeId, TEdge>
+    where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdgeId, TEdge>, INotifyCollectionChanged
     where TNodeId : notnull
-    where TNodeSet : INodeSet<TNodeId, TNode>
+    where TNodeSet : INodeSet<TNodeId, TNode>, INotifyCollectionChanged
 {
     protected DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet)
         : base(nodeSet, edgeSet)

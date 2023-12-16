@@ -34,9 +34,10 @@ public class DirectedEdgeSet<TNode, TEdge>
 
 public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
     : IDirectedEdgeSet<TNode, TEdge>
+    , INotifyCollectionChanged
     , IDisposable
     where TEdge : IEdge<TNode>
-    where TEdgeSet : IEdgeSet<TNode, TEdge>
+    where TEdgeSet : IEdgeSet<TNode, TEdge>, INotifyCollectionChanged
     where TNode : notnull
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
@@ -257,7 +258,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     : IDirectedEdgeSet<TNode, TEdgeId, TEdge>
     where TEdge : IEdge<TEdgeId, TNode>
     where TEdgeId : notnull
-    where TEdgeSet : IEdgeSet<TNode, TEdgeId, TEdge>
+    where TEdgeSet : IEdgeSet<TNode, TEdgeId, TEdge>, INotifyCollectionChanged
     where TNode : notnull
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;

@@ -3,7 +3,9 @@
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-public class EdgeSet<TNode, TEdge> : IEdgeSet<TNode, TEdge>
+public class EdgeSet<TNode, TEdge>
+    : IEdgeSet<TNode, TEdge>
+    , INotifyCollectionChanged
     where TEdge : IEdge<TNode>
     where TNode : notnull
 {
@@ -103,7 +105,9 @@ public class EdgeSet<TNode, TEdge> : IEdgeSet<TNode, TEdge>
     }
 }
 
-public class EdgeSet<TNode, TEdgeId, TEdge> : IEdgeSet<TNode, TEdgeId, TEdge>
+public class EdgeSet<TNode, TEdgeId, TEdge>
+    : IEdgeSet<TNode, TEdgeId, TEdge>
+    , INotifyCollectionChanged
     where TEdge : IEdge<TEdgeId, TNode>
     where TEdgeId : notnull
     where TNode : notnull

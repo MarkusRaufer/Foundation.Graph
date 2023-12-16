@@ -1,6 +1,5 @@
 namespace Foundation.Graph;
 
-using Foundation.Collections;
 using System.Collections.Specialized;
 using System.Linq;
 using Xunit;
@@ -47,7 +46,7 @@ public class EdgeSetTests
                 return;
             }
 
-            var newEdge = e.NewItems.CastTo<IEdge<string>>().Single();
+            var newEdge = e.NewItems.OfType<IEdge<string>>().Single();
 
             Assert.Equal(NotifyCollectionChangedAction.Add, e.Action);
             Assert.Equal(expectedEdge, newEdge);
@@ -60,9 +59,9 @@ public class EdgeSetTests
         Assert.True(calledCollectionChanged);
     }
 
-    private void Sut_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void Sut_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     [Fact]

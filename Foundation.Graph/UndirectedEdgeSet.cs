@@ -8,7 +8,9 @@ namespace Foundation.Graph;
 /// </summary>
 /// <typeparam name="TNode"></typeparam>
 /// <typeparam name="TEdge"></typeparam>
-public class UndirectedEdgeSet<TNode, TEdge> : IEdgeSet<TNode, TEdge>
+public class UndirectedEdgeSet<TNode, TEdge> 
+    : IEdgeSet<TNode, TEdge>
+    , INotifyCollectionChanged
     where TEdge : IEdge<TNode>
     where TNode : notnull
 {

@@ -1,7 +1,6 @@
 ﻿namespace Foundation.Graph;
 
 public interface IReadOnlyDirectedEdgeSet<TNode, TEdge>
-    : IReadOnlyEdgeSet<TNode, TEdge>
     where TEdge : IEdge<TNode>
 {
     /// <summary>
