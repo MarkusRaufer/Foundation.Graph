@@ -26,10 +26,4 @@
     <ProjectReference Include="..\Foundation.Graph\Foundation.Graph.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Foundation">
-      <HintPath>..\..\..\Foundation\Foundation\Foundation6\bin\$(Configuration)\net6.0\Foundation.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

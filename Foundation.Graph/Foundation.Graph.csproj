@@ -4,12 +4,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>$(LOCAL_NUGET)\</PackageOutputPath>
+    <Authors>Markus Raufer</Authors>
+    <Version>1.0.0-rc.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Foundation">
-      <HintPath>..\..\..\Foundation\Foundation\Foundation6\bin\$(Configuration)\net6.0\Foundation.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Foundation" Version="1.0.0-rc.2" />
   </ItemGroup>
 
 </Project>

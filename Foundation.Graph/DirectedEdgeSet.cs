@@ -5,8 +5,7 @@ using Foundation.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 
-public class DirectedEdgeSet<TNode, TEdge>
-: DirectedEdgeSet<TNode, TEdge, EdgeSet<TNode, TEdge>>
+public class DirectedEdgeSet<TNode, TEdge> : DirectedEdgeSet<TNode, TEdge, EdgeSet<TNode, TEdge>>
     where TEdge : IEdge<TNode>
     where TNode : notnull
 {
@@ -36,7 +35,7 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
     : IDirectedEdgeSet<TNode, TEdge>
     , INotifyCollectionChanged
     , IDisposable
-    where TEdge : IEdge<TNode>
+    where TEdge : notnull, IEdge<TNode>
     where TEdgeSet : IEdgeSet<TNode, TEdge>, INotifyCollectionChanged
     where TNode : notnull
 {
@@ -62,7 +61,7 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
     }
 
     
-    public void AddEdge([DisallowNull] TEdge edge)
+    public void AddEdge(TEdge edge)
     {
         if (!AllowDuplicateEdges && EdgeSet.ExistsEdge(edge))
             throw new ArgumentOutOfRangeException(nameof(edge), "edge exists");
@@ -256,6 +255,7 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
 
 public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     : IDirectedEdgeSet<TNode, TEdgeId, TEdge>
+    , INotifyCollectionChanged
     where TEdge : IEdge<TEdgeId, TNode>
     where TEdgeId : notnull
     where TEdgeSet : IEdgeSet<TNode, TEdgeId, TEdge>, INotifyCollectionChanged
