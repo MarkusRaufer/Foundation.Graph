@@ -114,8 +114,59 @@ public static class DirectedSearch
             return OutgoingEdges(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => e.Target);
         }
 
+        public static Option<TNode> CommonParent<TNode, TEdge>(IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet, IEnumerable<TNode> nodes)
+            where TEdge : IEdge<TNode>
+        {
+            edgeSet.ThrowIfNull(nameof(edgeSet));
+            nodes.ThrowIfNull(nameof(nodes));
+
+            if (!nodes.FirstAsOption().TryGet(out var first)) return Option.None<TNode>();
+            
+            var incomingNodesOfFirst = IncomingNodes(edgeSet!, first).ToHashSet();
+
+            var incomingNodes = nodes.Ignore(first)
+                                     .Select(x => IncomingNodes(edgeSet!, x))
+                                     .ToArray();
+
+            var enumerators = incomingNodes.Select(x => x.GetEnumerator()).ToArray();
+            var queuedEnumerators = enumerators.ToQueue();
+
+            var parent = Option.None<TNode>();
+
+            while (queuedEnumerators.Count > 0)
+            {
+                var it = queuedEnumerators.Dequeue();
+                var foundParent = findSameParent(it!);
+                if (foundParent.IsNone) return Option.None<TNode>();
+
+                if (parent.IsNone)
+                {
+                    parent = foundParent;
+                    continue;
+                }
+
+                if (foundParent == parent) continue;
+
+                parent = foundParent;
+
+                queuedEnumerators = enumerators.Ignore(it).ToQueue();
+            }
+
+            return parent;
+
+            Option<TNode> findSameParent(IEnumerator<TNode> enumerator)
+            {
+                while (enumerator.MoveNext())
+                {
+                    if (incomingNodesOfFirst.Contains(enumerator.Current)) return Option.Some(enumerator.Current);
+                }
+
+                return Option.None<TNode>();
+            }
+        }
+
         public static IEnumerable<TNode> Neighbors<TNode, TEdge>(IDirectedGraph<TNode, TEdge> graph, TNode node)
-                    where TEdge : IEdge<TNode>
+            where TEdge : IEdge<TNode>
         {
             return Bfs.IncomingNodes(graph, node)
                       .Concat(graph.OutgoingNodes(node))
