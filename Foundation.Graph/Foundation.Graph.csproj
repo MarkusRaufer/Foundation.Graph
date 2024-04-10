@@ -1,17 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(LOCAL_NUGET)\</PackageOutputPath>
     <Authors>Markus Raufer</Authors>
-    <Version>1.0.0-rc.2</Version>
+    <Version>1.0.0-rc.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation" Version="1.0.0-rc.2" />
+    <PackageReference Include="Foundation" Version="1.0.0-rc.79" />
   </ItemGroup>
 
 </Project>
