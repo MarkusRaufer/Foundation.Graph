@@ -21,30 +21,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Linq.Expressions;
 
-namespace Foundation.Graph.Algorithm;
+namespace Foundation.Graph.Linq;
 
-public class GraphNodeTupleComparer<TNode, TEdge> : IEqualityComparer<(IGraph<TNode, TEdge>, TNode)>
-    where TEdge : IEdge<TNode>
+public class BinaryExpressionGraphFactory : ExpressionVisitor
 {
-    public bool Equals((IGraph<TNode, TEdge>, TNode) lhs, (IGraph<TNode, TEdge>, TNode ) rhs)
+    private DirectedGraph<BinaryExpression, IEdge<BinaryExpression>> _graph = new ();
+
+    public IDirectedGraph<BinaryExpression, IEdge<BinaryExpression>> CreateGraph(Expression expression)
     {
-        var (lgraph, lnode) = lhs;
-        var (rgraph, rnode) = rhs;
+        _graph.Clear();
 
-        if (!ReferenceEquals(lgraph, rgraph))
-            return false;
+        base.Visit(expression);
 
-        if (null == lnode) return null == rnode;
-
-        return null != rnode && lnode.Equals(rnode);
+        return _graph;
     }
 
-    public int GetHashCode([DisallowNull] (IGraph<TNode, TEdge>, TNode) tuple)
+    protected override Expression VisitBinary(BinaryExpression node)
     {
-        var (graph, node) = tuple;
-        return System.HashCode.Combine(graph, node);
+        if(!_graph.ExistsNode(node)) _graph.AddNode(node);
+
+
+        if (node.Left is BinaryExpression binaryLeft && !_graph.ExistsNode(binaryLeft))
+        {
+            _graph.AddNode(binaryLeft);
+            _graph.AddEdge(Edge.New(node, binaryLeft));
+        }
+
+        if (node.Right is BinaryExpression binaryRight && !_graph.ExistsNode(binaryRight))
+        {
+            _graph.AddNode(binaryRight);
+            _graph.AddEdge(Edge.New(node, binaryRight));
+        }
+
+        return base.VisitBinary(node);
     }
 }
-
