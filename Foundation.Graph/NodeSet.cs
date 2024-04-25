@@ -23,6 +23,7 @@
 // SOFTWARE.
 ﻿namespace Foundation.Graph;
 
+using Foundation.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 
@@ -33,22 +34,28 @@ public class NodeSet<TNode>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly HashSet<TNode> _nodes;
+    private readonly ICollection<TNode> _nodes;
 
-    public NodeSet()
+    public NodeSet() : this(new HashSet<TNode>())
     {
-        _nodes = new HashSet<TNode>();
+    }
+
+    public NodeSet(ICollection<TNode> nodes)
+    {
+        _nodes = nodes.ThrowIfNull();
     }
 
     public NodeSet([DisallowNull] IEnumerable<TNode> nodes)
     {
-        if (null == nodes) throw new ArgumentNullException(nameof(nodes));
-        _nodes = new HashSet<TNode>(nodes);
+        _nodes = new HashSet<TNode>(nodes.ThrowIfNull());
     }
 
     public void AddNode([DisallowNull] TNode node)
     {
-        if(_nodes.Add(node))
+        var count = _nodes.Count;
+        _nodes.Add(node);
+
+        if (_nodes.Count > count)
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node));
     }
 
