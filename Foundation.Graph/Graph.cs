@@ -21,7 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-﻿using Foundation.ComponentModel;
+using Foundation.ComponentModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
@@ -34,12 +34,12 @@ namespace Foundation.Graph
         where TEdge : IEdge<TNode>
         where TNode : notnull
     {
-        public Graph() : base(new NodeSet<TNode>(), new EdgeSet<TNode, TEdge>())
+        public Graph(Func<TNode, TNode, TEdge>? edgeFactory = null) : base(new NodeSet<TNode>(), new EdgeSet<TNode, TEdge>(), edgeFactory)
         {
         }
 
-        public Graph(NodeSet<TNode> nodeSet, EdgeSet<TNode, TEdge> edgeSet)
-            : base(nodeSet, edgeSet)
+        public Graph(NodeSet<TNode> nodeSet, EdgeSet<TNode, TEdge> edgeSet, Func<TNode, TNode, TEdge>? edgeFactory = null)
+            : base(nodeSet, edgeSet, edgeFactory)
         {
         }
 
@@ -53,6 +53,7 @@ namespace Foundation.Graph
         : IGraph<TNode, TEdge>
         , IDisposable
         where TEdge : IEdge<TNode>
+        where TNode : notnull
         where TNodeSet : INodeSet<TNode>, INotifyCollectionChanged
         where TEdgeSet : IEdgeSet<TNode, TEdge>, INotifyCollectionChanged
     {
@@ -61,12 +62,12 @@ namespace Foundation.Graph
         public event NotifyCollectionChangedEventHandler? EdgeSetChanged;
         public event ObjectChangedEventHandler? ObjectChanged;
 
-        public Graph(TNodeSet nodeSet, TEdgeSet edgeSet)
+        public Graph(TNodeSet nodeSet, TEdgeSet edgeSet, Func<TNode, TNode, TEdge>? edgeFactory = null)
         {
-            if(null == nodeSet) throw new ArgumentNullException(nameof(nodeSet));
-            if (null == edgeSet) throw new ArgumentNullException(nameof(edgeSet));
-            NodeSet = nodeSet;
-            EdgeSet = edgeSet;
+            NodeSet = nodeSet.ThrowIfNull();
+            EdgeSet = edgeSet.ThrowIfNull();
+
+            EdgeFactory = edgeFactory;
 
             NodeSet.CollectionChanged += OnNodeSetChanged;
             EdgeSet.CollectionChanged += OnEdgeSetChanged;
@@ -103,6 +104,9 @@ namespace Foundation.Graph
             get { return EdgeSet.EdgeCount; }
         }
 
+        protected Func<TNode, TNode, TEdge>? EdgeFactory { get; }
+
+
         public IEnumerable<TEdge> Edges
         {
             get { return EdgeSet.Edges; }
@@ -120,6 +124,8 @@ namespace Foundation.Graph
             return EdgeSet.ExistsEdge(source, target);
         }
 
+        public IEnumerable<TEdge> GetEdges(TNode node) => EdgeSet.GetEdges(node);
+
         public virtual bool RemoveEdge(TEdge edge)
         {
             return EdgeSet.RemoveEdge(edge);
@@ -132,10 +138,7 @@ namespace Foundation.Graph
         #endregion IEdgeSet members
 
         #region INodeSet members
-        public virtual void AddNode(TNode node)
-        {
-            NodeSet.AddNode(node);
-        }
+        public virtual void AddNode(TNode node) => NodeSet.AddNode(node);
 
         public virtual void AddNodes(IEnumerable<TNode> nodes)
         {
@@ -147,26 +150,40 @@ namespace Foundation.Graph
             return NodeSet.ExistsNode(node);
         }
 
-        public IEnumerable<TEdge> GetEdges(TNode node) => EdgeSet.GetEdges(node);
+        public int NodeCount => NodeSet.NodeCount;
 
-        public int NodeCount
-        {
-            get { return NodeSet.NodeCount; }
-        }
-
-        public IEnumerable<TNode> Nodes
-        {
-            get { return NodeSet.Nodes; }
-        }
+        public IEnumerable<TNode> Nodes => NodeSet.Nodes;
 
         public virtual bool RemoveNode(TNode node)
         {
-            return NodeSet.RemoveNode(node);
+            if (NodeSet.RemoveNode(node))
+            {
+                var edges = EdgeSet.GetEdges(node).ToArray();
+                if (null != EdgeFactory)
+                {
+                    var incomingEdges = edges.Where(x => x.Target.Equals(node));
+                    var outgoingEdges = edges.Where(x => x.Source.Equals(node));
+
+                    foreach (var source in incomingEdges.Select(x => x.Source))
+                    {
+                        foreach (var target in outgoingEdges.Select(x => x.Target))
+                        {
+                            var newEdge = EdgeFactory(source, target);
+                            if (newEdge is not null) AddEdge(newEdge);
+                        }
+                    }
+                }
+
+                RemoveEdges(edges);
+                return true;
+            }
+
+            return false;
         }
 
         public virtual void RemoveNodes(IEnumerable<TNode> nodes)
         {
-            foreach (var node in nodes.ToList())
+            foreach (var node in nodes.ToArray())
                 RemoveNode(node);
         }
         #endregion IMutableNodeSet members
@@ -235,13 +252,11 @@ namespace Foundation.Graph
         public event NotifyCollectionChangedEventHandler? EdgeSetChanged;
         public event ObjectChangedEventHandler? ObjectChanged;
 
-        public Graph(TNodeSet nodeSet, TEdgeSet edgeSet)
+        public Graph(TNodeSet nodeSet, TEdgeSet edgeSet, Func<TNodeId, TNodeId, TEdge>? edgeFactory = null)
         {
-            if (null == nodeSet) throw new ArgumentNullException(nameof(nodeSet));
-            if (null == edgeSet) throw new ArgumentNullException(nameof(edgeSet));
-
-            NodeSet = nodeSet.ThrowIfNull(nameof(nodeSet));
-            EdgeSet = edgeSet.ThrowIfNull(nameof(nodeSet));
+            NodeSet = nodeSet.ThrowIfNull();
+            EdgeSet = edgeSet.ThrowIfNull();
+            EdgeFactory = edgeFactory;
 
             NodeSet.CollectionChanged += OnNodeSetChanged;
             EdgeSet.CollectionChanged += OnEdgeSetChanged;
@@ -340,6 +355,8 @@ namespace Foundation.Graph
             get { return EdgeSet.Edges; }
         }
 
+        protected Func<TNodeId, TNodeId, TEdge>? EdgeFactory { get; }
+
         protected TEdgeSet EdgeSet { get; private set; }
 
         public bool ExistsEdge(TEdge edge)
@@ -409,13 +426,28 @@ namespace Foundation.Graph
 
         public virtual bool RemoveNode(TNodeId id)
         {
-            var removed = NodeSet.RemoveNode(id);
-            if(removed)
+            if (NodeSet.RemoveNode(id))
             {
-                var edges = EdgeSet.GetEdges(id).ToList();
+                var edges = EdgeSet.GetEdges(id).ToArray();
+                if (null != EdgeFactory)
+                {
+                    var incomingEdges = edges.Where(x => x.Target.Equals(id));
+                    var outgoingEdges = edges.Where(x => x.Source.Equals(id));
+
+                    foreach (var source in incomingEdges.Select(x => x.Source))
+                    {
+                        foreach (var target in outgoingEdges.Select(x => x.Target))
+                        {
+                            var newEdge = EdgeFactory(source, target);
+                            if (newEdge is not null) AddEdge(newEdge);
+                        }
+                    }
+                }
                 RemoveEdges(edges);
+                return true;
             }
-            return removed;
+            
+            return false;
         }
 
         public virtual void RemoveNodes(IEnumerable<TNodeId> nodes)
@@ -443,13 +475,11 @@ namespace Foundation.Graph
         public event NotifyCollectionChangedEventHandler? EdgeSetChanged;
         public event ObjectChangedEventHandler? ObjectChanged;
 
-        public Graph(TNodeSet nodeSet, TEdgeSet edgeSet)
+        public Graph(TNodeSet nodeSet, TEdgeSet edgeSet, Func<TNodeId, TNodeId, TEdge>? edgeFactory = null)
         {
-            if (null == nodeSet) throw new ArgumentNullException(nameof(nodeSet));
-            if (null == edgeSet) throw new ArgumentNullException(nameof(edgeSet));
-            
-            NodeSet = nodeSet.ThrowIfNull(nameof(nodeSet)); ;
-            EdgeSet = edgeSet.ThrowIfNull(nameof(nodeSet)); ;
+            NodeSet = nodeSet.ThrowIfNull();
+            EdgeSet = edgeSet.ThrowIfNull();
+            EdgeFactory = edgeFactory;
 
             NodeSet.CollectionChanged += OnNodeSetChanged;
             EdgeSet.CollectionChanged += OnEdgeSetChanged;
@@ -518,6 +548,8 @@ namespace Foundation.Graph
         public int EdgeCount => EdgeSet.EdgeCount;
 
         public IEnumerable<TEdge> Edges => EdgeSet.Edges;
+
+        protected Func<TNodeId, TNodeId, TEdge>? EdgeFactory { get; }
 
         [NotNull]
         protected TEdgeSet EdgeSet { get; private set; }

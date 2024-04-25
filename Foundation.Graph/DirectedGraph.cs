@@ -21,9 +21,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-﻿namespace Foundation.Graph;
+namespace Foundation.Graph;
 
-using Foundation.Graph.Algorithm;
 using System.Collections.Specialized;
 
 public class DirectedGraph<TNode, TEdge>
@@ -32,18 +31,18 @@ public class DirectedGraph<TNode, TEdge>
     where TEdge : IEdge<TNode>
     where TNode : notnull
 {
-    public DirectedGraph()
-        : base(new NodeSet<TNode>(), new DirectedEdgeSet<TNode, TEdge>())
+    public DirectedGraph(Func<TNode, TNode, TEdge>? edgeFactory = null)
+        : base(new NodeSet<TNode>(), new DirectedEdgeSet<TNode, TEdge>(), edgeFactory)
     {
     }
 
-    public DirectedGraph(IEnumerable<TNode> nodes)
-        : base(new NodeSet<TNode>(nodes), new DirectedEdgeSet<TNode, TEdge>())
+    public DirectedGraph(IEnumerable<TNode> nodes, Func<TNode, TNode, TEdge>? edgeFactory = null)
+        : base(new NodeSet<TNode>(nodes), new DirectedEdgeSet<TNode, TEdge>(), edgeFactory)
     {
     }
 
-    public DirectedGraph(NodeSet<TNode> nodeSet, DirectedEdgeSet<TNode, TEdge> edgeSet)
-        : base(nodeSet, edgeSet)
+    public DirectedGraph(NodeSet<TNode> nodeSet, DirectedEdgeSet<TNode, TEdge> edgeSet, Func<TNode, TNode, TEdge>? edgeFactory = null)
+        : base(nodeSet, edgeSet, edgeFactory)
     {
     }
 }
@@ -52,11 +51,12 @@ public class DirectedGraph<TNode, TEdge, TNodeSet, TEdgeSet>
     : Graph<TNode, TEdge, TNodeSet, TEdgeSet>
     , IDirectedGraph<TNode, TEdge>
     where TEdge : IEdge<TNode>
+    where TNode : notnull
     where TNodeSet : INodeSet<TNode>, INotifyCollectionChanged
     where TEdgeSet : IDirectedEdgeSet<TNode, TEdge>, INotifyCollectionChanged
 {
-    public DirectedGraph(TNodeSet nodes, TEdgeSet edges)
-        : base(nodes, edges)
+    public DirectedGraph(TNodeSet nodes, TEdgeSet edges, Func<TNode, TNode, TEdge>? edgeFactory = null)
+        : base(nodes, edges, edgeFactory)
     {
     }
 
@@ -92,13 +92,36 @@ public class DirectedGraph<TNode, TEdge, TNodeSet, TEdgeSet>
 
     public override bool RemoveNode(TNode node)
     {
-        var inEdges = EdgeSet.IncomingEdges(node).ToList();
-        RemoveEdges(inEdges);
+        if (NodeSet.RemoveNode(node))
+        {
+            var incomingEdges = EdgeSet.IncomingEdges(node).ToArray();
+            var outgoingEdges = EdgeSet.OutgoingEdges(node).ToArray();
 
-        var outEdges = DirectedSearch.Bfs.OutgoingEdges(this, node).ToList();
-        RemoveEdges(outEdges);
+            if (null != EdgeFactory)
+            {
+                foreach (var incomingEdge in incomingEdges)
+                {
+                    foreach (var outgoingEdge in outgoingEdges)
+                    {
+                        var newEdge = EdgeFactory(incomingEdge.Source, outgoingEdge.Target);
+                        if (newEdge is not null) AddEdge(newEdge);
 
-        return base.RemoveNode(node);
+                        RemoveEdge(outgoingEdge);
+                    }
+
+                    RemoveEdge(incomingEdge);
+                }
+
+                return true;
+            }
+
+            RemoveEdges(incomingEdges);
+            RemoveEdges(outgoingEdges);
+
+            return true;
+        }
+
+        return false;
     }
 
     public override void RemoveNodes(IEnumerable<TNode> nodes)
@@ -116,15 +139,13 @@ public class DirectedGraph<TNodeId, TNode, TEdge>
     where TNode : IIdentifiable<TNodeId>
     where TNodeId : notnull
 {
-    public DirectedGraph()
-        : this(new NodeSet<TNodeId, TNode>(), new DirectedEdgeSet<TNodeId, TEdge>())
+    public DirectedGraph(Func<TNodeId, TNodeId, TEdge>? edgeFactory = null)
+        : this(new NodeSet<TNodeId, TNode>(), new DirectedEdgeSet<TNodeId, TEdge>(), edgeFactory)
     {
     }
 
-    public DirectedGraph(
-        NodeSet<TNodeId, TNode> nodeSet,
-        DirectedEdgeSet<TNodeId, TEdge> edgeSet)
-        : base(nodeSet, edgeSet)
+    public DirectedGraph(NodeSet<TNodeId, TNode> nodeSet, DirectedEdgeSet<TNodeId, TEdge> edgeSet, Func<TNodeId, TNodeId, TEdge>? edgeFactory = null)
+        : base(nodeSet, edgeSet, edgeFactory)
     {
     }
 }
@@ -138,8 +159,8 @@ public class DirectedGraph<TNodeId, TNode, TEdge, TNodeSet, TEdgeSet>
     where TNodeId : notnull
     where TNodeSet : INodeSet<TNodeId, TNode>, INotifyCollectionChanged
 {
-    public DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet)
-        : base(nodeSet, edgeSet)
+    public DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet, Func<TNodeId, TNodeId, TEdge>? edgeFactory = null)
+        : base(nodeSet, edgeSet, edgeFactory)
     {
     }
 
@@ -161,6 +182,40 @@ public class DirectedGraph<TNodeId, TNode, TEdge, TNodeSet, TEdgeSet>
     public IEnumerable<TEdge> OutgoingEdges(TNodeId node)
     {
         return EdgeSet.OutgoingEdges(node);
+    }
+
+    public override bool RemoveNode(TNodeId id)
+    {
+        if (NodeSet.RemoveNode(id))
+        {
+            var incomingEdges = EdgeSet.IncomingEdges(id).ToArray();
+            var outgoingEdges = EdgeSet.OutgoingEdges(id).ToArray();
+
+            if (null != EdgeFactory)
+            {
+                foreach (var incomingEdge in incomingEdges)
+                {
+                    foreach (var outgoingEdge in outgoingEdges)
+                    {
+                        var newEdge = EdgeFactory(incomingEdge.Source, outgoingEdge.Target);
+                        if (newEdge is not null) AddEdge(newEdge);
+
+                        RemoveEdge(outgoingEdge);
+                    }
+
+                    RemoveEdge(incomingEdge);
+                }
+
+                return true;
+            }
+
+            RemoveEdges(incomingEdges);
+            RemoveEdges(outgoingEdges);
+
+            return true;
+        }
+
+        return false;
     }
 }
 
@@ -173,8 +228,8 @@ public abstract class DirectedGraph<TNodeId, TNode, TEdgeId, TEdge, TNodeSet, TE
     where TNodeId : notnull
     where TNodeSet : INodeSet<TNodeId, TNode>, INotifyCollectionChanged
 {
-    protected DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet)
-        : base(nodeSet, edgeSet)
+    protected DirectedGraph(TNodeSet nodeSet, TEdgeSet edgeSet, Func<TNodeId, TNodeId, TEdge>? edgeFactory = null)
+        : base(nodeSet, edgeSet, edgeFactory)
     {
     }
 
@@ -196,6 +251,40 @@ public abstract class DirectedGraph<TNodeId, TNode, TEdgeId, TEdge, TNodeSet, TE
     public IEnumerable<TEdge> OutgoingEdges(TNodeId node)
     {
         return EdgeSet.OutgoingEdges(node);
+    }
+
+    public override bool RemoveNode(TNodeId id)
+    {
+        if (NodeSet.RemoveNode(id))
+        {
+            var incomingEdges = EdgeSet.IncomingEdges(id).ToArray();
+            var outgoingEdges = EdgeSet.OutgoingEdges(id).ToArray();
+
+            if (null != EdgeFactory)
+            {
+                foreach (var incomingEdge in incomingEdges)
+                {
+                    foreach (var outgoingEdge in outgoingEdges)
+                    {
+                        var newEdge = EdgeFactory(incomingEdge.Source, outgoingEdge.Target);
+                        if (newEdge is not null) AddEdge(newEdge);
+
+                        RemoveEdge(outgoingEdge);
+                    }
+
+                    RemoveEdge(incomingEdge);
+                }
+
+                return true;
+            }
+
+            RemoveEdges(incomingEdges);
+            RemoveEdges(outgoingEdges);
+
+            return true;
+        }
+
+        return false;
     }
 }
 
