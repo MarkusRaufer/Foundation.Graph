@@ -270,10 +270,7 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
         return removed;
     }
 
-    public bool ExistsEdge(TNode source, TNode target)
-    {
-        throw new NotImplementedException();
-    }
+    public bool ExistsEdge(TNode source, TNode target) => EdgeSet.ExistsEdge(source, target);
 }
 
 public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
