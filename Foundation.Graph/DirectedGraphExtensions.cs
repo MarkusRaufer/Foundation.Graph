@@ -168,4 +168,60 @@ public static class DirectedGraphExtensions
             if (!graph.OutgoingEdges(subGraphEdge.Source).Any(x => x.Target.Equals(subGraphEdge.Target))) graph.AddEdge(subGraphEdge);
         }
     }
+
+    public static void ReplaceNode<TNode, TEdge>(this IDirectedGraph<TNode, TEdge> graph, TNode source, TNode target, Func<TNode, TNode, TEdge> edgeFactory)
+        where TEdge : IEdge<TNode>
+    {
+        graph.ThrowIfNull();
+        source.ThrowIfNull();
+        target.ThrowIfNull();
+        edgeFactory.ThrowIfNull();
+
+        if (!graph.ExistsNode(target)) graph.AddNode(target);
+
+        foreach (var incomingEdge in graph.IncomingEdges(source))
+        {
+            var replaceEdge = edgeFactory(incomingEdge.Source, target);
+
+            graph.RemoveEdge(incomingEdge);
+            graph.AddEdge(replaceEdge);
+        }
+        foreach (var outgoingEdge in graph.OutgoingEdges(source))
+        {
+            var replaceEdge = edgeFactory(target, outgoingEdge.Target);
+
+            graph.RemoveEdge(outgoingEdge);
+            graph.AddEdge(replaceEdge);
+        }
+
+        graph.RemoveNode(source);
+    }
+
+    public static void ReplaceNode<TNodeId, TNode, TEdge>(this IDirectedGraph<TNodeId, TNode, TEdge> graph, TNodeId sourceId, TNodeId targetId, TNode target, Func<TNodeId, TNodeId, TEdge> edgeFactory)
+        where TEdge : IEdge<TNodeId>
+        where TNodeId : notnull
+    {
+        graph.ThrowIfNull();
+        target.ThrowIfNull();
+        edgeFactory.ThrowIfNull();
+
+        if (!graph.ExistsNode(targetId)) graph.AddNode(targetId, target);
+
+        foreach (var incomingEdge in graph.IncomingEdges(sourceId))
+        {
+            var replaceEdge = edgeFactory(incomingEdge.Source, targetId);
+
+            graph.RemoveEdge(incomingEdge);
+            graph.AddEdge(replaceEdge);
+        }
+        foreach (var outgoingEdge in graph.OutgoingEdges(sourceId))
+        {
+            var replaceEdge = edgeFactory(targetId, outgoingEdge.Target);
+
+            graph.RemoveEdge(outgoingEdge);
+            graph.AddEdge(replaceEdge);
+        }
+
+        graph.RemoveNode(sourceId);
+    }
 }

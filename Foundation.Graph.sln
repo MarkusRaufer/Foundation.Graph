@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Graph", "Foundation.Graph\Foundation.Graph.csproj", "{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Graph.Tests", "Foundation.Graph.Tests\Foundation.Graph.Tests.csproj", "{F0FA20F7-4E8F-4FE9-BFC1-34E71DBC3EC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Graph.Tests", "Foundation.Graph.Tests\Foundation.Graph.Tests.csproj", "{F0FA20F7-4E8F-4FE9-BFC1-34E71DBC3EC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -21,16 +21,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-﻿using System.Linq.Expressions;
+using Foundation.Linq.Expressions;
+using System.Linq.Expressions;
 
 namespace Foundation.Graph.Linq;
 
 public class BinaryExpressionGraphFactory : ExpressionVisitor
 {
-    private DirectedGraph<BinaryExpression, IEdge<BinaryExpression>> _graph = new ();
+    private readonly DirectedGraph<Expression, IEdge<Expression>> _graph = new (new NodeSet<Expression>(new List<Expression>()), new DirectedEdgeSet<Expression, IEdge<Expression>>());
+    private ParameterExpression? _parameter;
 
-    public IDirectedGraph<BinaryExpression, IEdge<BinaryExpression>> CreateGraph(Expression expression)
+    public IDirectedGraph<Expression, IEdge<Expression>> CreateGraph(Expression expression)
     {
+        expression.ThrowIfNull();
+
         _graph.Clear();
 
         base.Visit(expression);
@@ -38,22 +42,88 @@ public class BinaryExpressionGraphFactory : ExpressionVisitor
         return _graph;
     }
 
+    public IDirectedGraph<Expression, IEdge<Expression>> CreateGraph(Expression expression, ParameterExpression parameter)
+    {
+        expression.ThrowIfNull();
+        _parameter = parameter.ThrowIfNull();
+
+        _graph.Clear();
+
+        base.Visit(expression);
+
+        return _graph;
+    }
+
+
     protected override Expression VisitBinary(BinaryExpression node)
     {
-        if(!_graph.ExistsNode(node)) _graph.AddNode(node);
-
-
-        if (node.Left is BinaryExpression binaryLeft && !_graph.ExistsNode(binaryLeft))
+        if (_parameter is not null && !node.GetParameters().Any(x => x.EqualsToExpression(_parameter)))
         {
-            _graph.AddNode(binaryLeft);
-            _graph.AddEdge(Edge.New(node, binaryLeft));
+            return base.VisitBinary(node);
         }
 
-        if (node.Right is BinaryExpression binaryRight && !_graph.ExistsNode(binaryRight))
+        if (!_graph.ExistsNode(node)) _graph.AddNode(node);
+
+        Expression? leftAdded = null;
+        if (node.Left is BinaryExpression binaryLeft)
         {
-            _graph.AddNode(binaryRight);
-            _graph.AddEdge(Edge.New(node, binaryRight));
+            if (_parameter is not null && !binaryLeft.GetParameters().Any(x => x.EqualsToExpression(_parameter)))
+            {
+                return base.VisitBinary(node);
+            }
+            
+            if (!_graph.ExistsNode(binaryLeft))
+            {
+                leftAdded = node.Left;
+                _graph.AddNode(leftAdded);
+            }
         }
+        else
+        {
+            if (node.Left is ParameterExpression paramLeft)
+            {
+                leftAdded = IdExpression.New(Guid.NewGuid(), paramLeft);
+                _graph.AddNode(leftAdded);
+            }
+            else
+            {
+                leftAdded = node.Left;
+                _graph.AddNode(leftAdded);
+            }
+        }
+
+        if (leftAdded is not null && !_graph.ExistsEdge(node, leftAdded)) _graph.AddEdge(Edge.New(node, leftAdded));
+
+
+        Expression? rightAdded = null;
+        if (node.Right is BinaryExpression binaryRight)
+        {
+            if (_parameter is not null && !binaryRight.GetParameters().Any(x => x.EqualsToExpression(_parameter)))
+            {
+                return base.VisitBinary(node);
+            }
+
+            if (!_graph.ExistsNode(binaryRight))
+            {
+                rightAdded = node.Right;
+                _graph.AddNode(rightAdded);
+            }
+        }
+        else
+        {
+            if (node.Right is ParameterExpression paramRight)
+            {
+                rightAdded = IdExpression.New(Guid.NewGuid(), paramRight);
+                _graph.AddNode(rightAdded);
+            }
+            else
+            {
+                rightAdded = node.Right;
+                _graph.AddNode(rightAdded);
+            }
+        }
+
+        if (rightAdded is not null && !_graph.ExistsEdge(node, rightAdded)) _graph.AddEdge(Edge.New(node, rightAdded));
 
         return base.VisitBinary(node);
     }
