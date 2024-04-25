@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using Foundation.Graph.Algorithm;
+using Foundation.Graph.Linq;
+using System.Linq.Expressions;
 
 namespace Foundation.Graph.Tests.Algorithm;
 
@@ -14,6 +16,22 @@ public class DirectedSearchTests
         edgeSet.AddEdges(edges);
 
         var result = DirectedSearch.Bfs.CommonParent(edgeSet, [111, 211]);
+
+        result.IsNone.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CommonParent_Should_ReturnNone_When_UsingHeight3x()
+    {
+        LambdaExpression lambda = (string str, int x) => str == "A" && x == 3 || x > 10;
+
+        var factory = new BinaryExpressionGraphFactory();
+        var graph = factory.CreateGraph(lambda);
+
+        var parameters = graph.Nodes.OfType<ParameterExpression>().Where(x => x.NodeType == ExpressionType.Parameter && x.Name == "x").ToArray();
+
+        var eq = parameters[0].Equals(parameters[1]);
+        var result = DirectedSearch.Bfs.CommonParent(graph, parameters);
 
         result.IsNone.Should().BeTrue();
     }
@@ -214,6 +232,59 @@ public class DirectedSearchTests
     }
 
     [Fact]
+    public void IncommingEdgesWithDepthLevel_Should_ReturnNone_When_UsingHeight3()
+    {
+        var edges = CreateEdges(1, 2, 4).ToArray();
+        var edgeSet = new DirectedEdgeSet<int, Edge<int>>();
+        edgeSet.AddEdges(edges);
+
+        var incomingEdges = DirectedSearch.Bfs.IncomingEdgesWithDepthLevel(edgeSet, 1122).ToArray();
+
+        incomingEdges.Length.Should().Be(3);
+        {
+            var incomingEdge = incomingEdges[0];
+            incomingEdge.Depth.Should().Be(1);
+        }
+        {
+            var incomingEdge = incomingEdges[1];
+            incomingEdge.Depth.Should().Be(2);
+        }
+        {
+            var incomingEdge = incomingEdges[2];
+            incomingEdge.Depth.Should().Be(3);
+        }
+    }
+
+    [Fact]
+    public void IncommingNodesWithDepthLevel_Should_ReturnNone_When_UsingHeight3()
+    {
+        var graph = new DirectedGraph<int, Edge<int>>();
+        foreach (var edge in CreateEdges(1, 2, 4))
+        {
+            if (!graph.ExistsNode(edge.Source)) graph.AddNode(edge.Source);
+            if (!graph.ExistsNode(edge.Target)) graph.AddNode(edge.Target);
+
+            if (!graph.ExistsEdge(edge)) graph.AddEdge(edge);
+        }
+       
+        var incomingNodes = DirectedSearch.Bfs.IncomingNodesWithDepthLevel(graph, 1122).ToArray();
+
+        incomingNodes.Length.Should().Be(3);
+        {
+            var incomingNode = incomingNodes[0];
+            incomingNode.Depth.Should().Be(1);
+        }
+        {
+            var incomingNode = incomingNodes[1];
+            incomingNode.Depth.Should().Be(2);
+        }
+        {
+            var incomingNode = incomingNodes[2];
+            incomingNode.Depth.Should().Be(3);
+        }
+    }
+
+    [Fact]
     public void OutgoingEdges()
     {
         var edgeSet = new DirectedEdgeSet<int, Edge<int>>();
@@ -232,6 +303,80 @@ public class DirectedSearchTests
         outgoingEdges[5].Should().Be(newEdge(12, 122));
 
         static Edge<int> newEdge(int source, int target) => new (source, target);
+    }
+
+    [Fact]
+    public void OutgoingEdgesWithDepthLevel_Should_ReturnNone_When_UsingHeight3()
+    {
+        var edges = CreateEdges(1, 2, 4).ToArray();
+        var edgeSet = new DirectedEdgeSet<int, Edge<int>>();
+        edgeSet.AddEdges(edges);
+
+        var outgoingEdges = DirectedSearch.Bfs.OutgoingEdgesWithDepthLevel(edgeSet, 1).ToArray();
+
+        outgoingEdges.Length.Should().Be(14);
+
+        // depth level 1
+        {
+            var outgoingEdge = outgoingEdges[0];
+            outgoingEdge.Depth.Should().Be(1);
+        }
+        {
+            var outgoingEdge = outgoingEdges[1];
+            outgoingEdge.Depth.Should().Be(1);
+        }
+
+        // depth level 2
+        {
+            var outgoingEdge = outgoingEdges[2];
+            outgoingEdge.Depth.Should().Be(2);
+        }
+        {
+            var outgoingEdge = outgoingEdges[3];
+            outgoingEdge.Depth.Should().Be(2);
+        }
+        {
+            var outgoingEdge = outgoingEdges[4];
+            outgoingEdge.Depth.Should().Be(2);
+        }
+        {
+            var outgoingEdge = outgoingEdges[5];
+            outgoingEdge.Depth.Should().Be(2);
+        }
+
+        // depth level 3
+        {
+            var outgoingEdge = outgoingEdges[6];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[7];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[8];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[9];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[10];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[11];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[12];
+            outgoingEdge.Depth.Should().Be(3);
+        }
+        {
+            var outgoingEdge = outgoingEdges[13];
+            outgoingEdge.Depth.Should().Be(3);
+        }
     }
 
     private static IEnumerable<Edge<int>> CreateEdges(int numberOfRootNodes, int numberOfChildNodes, int hierarchyLevel)

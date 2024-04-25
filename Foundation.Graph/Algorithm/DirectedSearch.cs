@@ -74,6 +74,45 @@ public static class DirectedSearch
             }
         }
 
+        public static IEnumerable<EdgeWithDepthLevel<TEdge, TNode>> IncomingEdgesWithDepthLevel<TNode, TEdge>(
+          IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
+          TNode node,
+          int searchDepth = int.MaxValue,
+          Func<TEdge, bool>? predicate = null,
+          Func<TNode, bool>? stopPredicate = null)
+          where TEdge : IEdge<TNode>
+        {
+            var nodes = new Queue<NodeDepth<TNode>>();
+            nodes.Enqueue(new NodeDepth<TNode>(node, 1));
+
+            var visitedEdges = new HashSet<TEdge>();
+            var visitedNodes = new HashSet<TNode>();
+            while (0 < nodes.Count)
+            {
+                var n = nodes.Dequeue();
+
+                if (n.SearchDepth == searchDepth) yield break;
+
+                if (null != stopPredicate && stopPredicate(n.Node))
+                    yield break;
+
+                if (visitedNodes.Contains(n.Node))
+                    continue;
+
+                visitedNodes.Add(n.Node);
+                var inEdges = (null == predicate)
+                    ? edgeSet.IncomingEdges(n.Node).Except(visitedEdges)
+                    : edgeSet.IncomingEdges(n.Node).Where(predicate).Except(visitedEdges);
+
+                foreach (var inEdge in inEdges)
+                {
+                    yield return new EdgeWithDepthLevel<TEdge, TNode>(inEdge, n.SearchDepth);
+                    visitedEdges.Add(inEdge);
+                    nodes.Enqueue(new NodeDepth<TNode>(inEdge.Source, n.SearchDepth + 1));
+                }
+            }
+        }
+
         public static IEnumerable<TNode> IncomingNodes<TNode, TEdge>(
             IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
@@ -83,6 +122,17 @@ public static class DirectedSearch
             where TEdge : IEdge<TNode>
         {
             return IncomingEdges(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => e.Source);
+        }
+
+        public static IEnumerable<NodeWithDepthLevel<TNode>> IncomingNodesWithDepthLevel<TNode, TEdge>(
+            IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
+            TNode node,
+            int searchDepth = int.MaxValue,
+            Func<TEdge, bool>? predicate = null,
+            Func<TNode, bool>? stopPredicate = null)
+            where TEdge : IEdge<TNode>
+        {
+            return IncomingEdgesWithDepthLevel(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => new NodeWithDepthLevel<TNode>(e.Edge.Source, e.Depth));
         }
 
         public static IEnumerable<TEdge> OutgoingEdges<TNode, TEdge>(
@@ -125,6 +175,46 @@ public static class DirectedSearch
             }
         }
 
+        public static IEnumerable<EdgeWithDepthLevel<TEdge, TNode>> OutgoingEdgesWithDepthLevel<TNode, TEdge>(
+            IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
+            TNode node,
+            int searchDepth = int.MaxValue,
+            Func<TEdge, bool>? predicate = null,
+            Func<TNode, bool>? stopPredicate = null)
+            where TEdge : IEdge<TNode>
+        {
+            var nodes = new Queue<NodeDepth<TNode>>();
+            nodes.Enqueue(new NodeDepth<TNode>(node, 1));
+
+            var visitedEdges = new HashSet<TEdge>();
+            var visitedNodes = new HashSet<TNode>();
+
+            while (0 < nodes.Count)
+            {
+                var n = nodes.Dequeue();
+
+                if (n.SearchDepth == searchDepth) yield break;
+
+                if (null != stopPredicate && stopPredicate(n.Node)) yield break;
+
+                if (visitedNodes.Contains(n.Node))
+                    continue;
+
+                visitedNodes.Add(n.Node);
+
+                var outEdges = (null == predicate)
+                    ? edgeSet.OutgoingEdges(n.Node).Except(visitedEdges)
+                    : edgeSet.OutgoingEdges(n.Node).Where(predicate).Except(visitedEdges);
+
+                foreach (var outEdge in outEdges)
+                {
+                    yield return new EdgeWithDepthLevel<TEdge, TNode>(outEdge, n.SearchDepth);
+                    visitedEdges.Add(outEdge);
+                    nodes.Enqueue(new NodeDepth<TNode>(outEdge.Target, n.SearchDepth + 1));
+                }
+            }
+        }
+
         public static IEnumerable<TNode> OutgoingNodes<TNode, TEdge>(
             IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
             TNode node,
@@ -137,6 +227,18 @@ public static class DirectedSearch
             return OutgoingEdges(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => e.Target);
         }
 
+        public static IEnumerable<NodeWithDepthLevel<TNode>> OutgoingNodesWithDepthLevel<TNode, TEdge>(
+            IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet,
+            TNode node,
+            int searchDepth = int.MaxValue,
+            Func<TEdge, bool>? predicate = null,
+            Func<TNode, bool>? stopPredicate = null)
+            where TEdge : IEdge<TNode>
+        {
+            // TODO: int.MaxValue
+            return OutgoingEdgesWithDepthLevel(edgeSet, node, searchDepth, predicate, stopPredicate).Select(e => new NodeWithDepthLevel<TNode>(e.Edge.Target, e.Depth));
+        }
+
         public static Option<TNode> CommonParent<TNode, TEdge>(IReadOnlyDirectedEdgeSet<TNode, TEdge> edgeSet, IEnumerable<TNode> nodes)
             where TEdge : IEdge<TNode>
         {
@@ -144,7 +246,7 @@ public static class DirectedSearch
             nodes.ThrowIfNull(nameof(nodes));
 
             if (!nodes.FirstAsOption().TryGet(out var first)) return Option.None<TNode>();
-            
+
             var incomingNodesOfFirst = IncomingNodes(edgeSet!, first).ToHashSet();
 
             var incomingNodes = nodes.Ignore(first)
