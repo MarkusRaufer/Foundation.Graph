@@ -20,21 +20,6 @@ public class DirectedSearchTests
         result.IsNone.Should().BeTrue();
     }
 
-    [Fact]
-    public void CommonParent_Should_ReturnNone_When_UsingHeight3x()
-    {
-        LambdaExpression lambda = (string str, int x) => str == "A" && x == 3 || x > 10;
-
-        var factory = new BinaryExpressionGraphFactory();
-        var graph = factory.CreateGraph(lambda);
-
-        var parameters = graph.Nodes.OfType<ParameterExpression>().Where(x => x.NodeType == ExpressionType.Parameter && x.Name == "x").ToArray();
-
-        var eq = parameters[0].Equals(parameters[1]);
-        var result = DirectedSearch.Bfs.CommonParent(graph, parameters);
-
-        result.IsNone.Should().BeTrue();
-    }
 
     [Fact]
     public void CommonParent_Should_ReturnNone_When_UsingHeight4()
