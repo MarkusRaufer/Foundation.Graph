@@ -44,7 +44,11 @@ public class GraphNodeTupleComparer<TNode, TEdge> : IEqualityComparer<(IGraph<TN
     public int GetHashCode([DisallowNull] (IGraph<TNode, TEdge>, TNode) tuple)
     {
         var (graph, node) = tuple;
+#if NETSTANDARD2_0
+        return Foundation.HashCode.FromObject(graph, node);
+#else
         return System.HashCode.Combine(graph, node);
+#endif
     }
 }
 

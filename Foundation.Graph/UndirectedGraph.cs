@@ -96,6 +96,8 @@ public class UndirectedGraph<TNode, TEdge>
 
     public IEnumerable<TEdge> GetEdges(TNode node) => _edgeSet.GetEdges(node);
 
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => GetEdges(source, target);
+
     public int NodeCount => _nodeSet.NodeCount;
 
     public IEnumerable<TNode> Nodes => _nodeSet.Nodes;

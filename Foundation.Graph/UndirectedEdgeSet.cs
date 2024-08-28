@@ -23,6 +23,7 @@
 // SOFTWARE.
 ﻿using Foundation.Collections.Generic;
 using System.Collections.Specialized;
+using System.Xml.Linq;
 
 namespace Foundation.Graph;
 
@@ -98,6 +99,12 @@ public class UndirectedEdgeSet<TNode, TEdge>
     public IEnumerable<TEdge> GetEdges(TNode node)
     {
         return _node2Edges.GetValues(new [] { node });
+    }
+
+
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target)
+    {
+        return _node2Edges.GetValues([source, target]).Where(x => x.Source.Equals(source) && x.Target.Equals(target));
     }
 
     public bool RemoveEdge(TEdge edge)

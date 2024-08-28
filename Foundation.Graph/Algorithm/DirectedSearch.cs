@@ -247,7 +247,11 @@ public static class DirectedSearch
 
             if (!nodes.FirstAsOption().TryGet(out var first)) return Option.None<TNode>();
 
+#if NETSTANDARD2_0
+            var incomingNodesOfFirst = new HashSet<TNode>(IncomingNodes(edgeSet!, first));
+#else
             var incomingNodesOfFirst = IncomingNodes(edgeSet!, first).ToHashSet();
+#endif
 
             var incomingNodes = nodes.Ignore(first)
                                      .Select(x => IncomingNodes(edgeSet!, x))

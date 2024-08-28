@@ -1,17 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	<LangVersion>latest</LangVersion>
-    <PackageOutputPath>$(LOCAL_NUGET)\</PackageOutputPath>
-    <Authors>Markus Raufer</Authors>
-    <Version>1.0.1</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net8.0;netstandard2.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		
+		<PackageOutputPath>$(LOCAL_NUGET)\</PackageOutputPath>
+		<Copyright>Markus Raufer</Copyright>
+		<Authors>Markus Raufer</Authors>
+		<Description>A C# library for graph structures.</Description>
+		<PackageId>Foundation.Graph</PackageId>
+		<PackageTags>in memory graph;graph search</PackageTags>
+		<ProductName>Foundation.Graph</ProductName>
+		<Version>1.0.3</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Foundation" Version="1.3.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Foundation" Version="1.3.2" />
+	</ItemGroup>
 
 </Project>

@@ -25,6 +25,7 @@ using Foundation.ComponentModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace Foundation.Graph
 {
@@ -125,6 +126,9 @@ namespace Foundation.Graph
         }
 
         public IEnumerable<TEdge> GetEdges(TNode node) => EdgeSet.GetEdges(node);
+
+
+        public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => EdgeSet.GetEdges(source, target);
 
         public virtual bool RemoveEdge(TEdge edge)
         {
@@ -383,6 +387,8 @@ namespace Foundation.Graph
 
         public IEnumerable<TEdge> GetEdges(TNodeId nodeId) => EdgeSet.GetEdges(nodeId);
 
+        public IEnumerable<TEdge> GetEdges(TNodeId source, TNodeId target) => EdgeSet.GetEdges(source, target);
+
         public int NodeCount
         {
             get { return NodeSet.NodeCount; }
@@ -570,6 +576,8 @@ namespace Foundation.Graph
         public Option<TEdge> GetEdge(TEdgeId id) => EdgeSet.GetEdge(id);
 
         public IEnumerable<TEdge> GetEdges(TNodeId node) => EdgeSet.GetEdges(node);
+
+        public IEnumerable<TEdge> GetEdges(TNodeId source, TNodeId target) => EdgeSet.GetEdges(source, target);
 
         public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
 

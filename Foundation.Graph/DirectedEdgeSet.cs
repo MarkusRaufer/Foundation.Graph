@@ -191,6 +191,9 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
                                   .Distinct();
     }
 
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target)
+        => OutgoingEdges(source).Where(x => x.Target.Equals(target));
+
     public IEnumerable<TEdge> IncomingEdges([DisallowNull] TNode node)
     {
         if (_incomingEdges.Value.TryGetValue(node, out HashSet<TEdge>? edges))
@@ -304,7 +307,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 
     public void AddEdge([DisallowNull] TEdge edge)
     {
-        ArgumentNullException.ThrowIfNull(edge, nameof(edge));
+        edge.ThrowIfNull();
 
         AddIncomingEdge(edge);
         AddOutgoingEdge(edge);
@@ -409,6 +412,8 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     public Option<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
 
     public IEnumerable<TEdge> GetEdges(TNode node) => EdgeSet.GetEdges(node);
+
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => EdgeSet.GetEdges(source, target);
 
     public IEnumerable<TEdge> IncomingEdges(TNode node)
     {

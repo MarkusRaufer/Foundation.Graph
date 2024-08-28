@@ -21,11 +21,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-﻿namespace Foundation.Graph;
+namespace Foundation.Graph;
 
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Xml.Linq;
+
 public class EdgeSet<TNode, TEdge>
     : IEdgeSet<TNode, TEdge>
     , INotifyCollectionChanged
@@ -51,7 +53,7 @@ public class EdgeSet<TNode, TEdge>
 
     public void AddEdge([DisallowNull] TEdge edge)
     {
-        ArgumentNullException.ThrowIfNull(edge, nameof(edge));
+        edge.ThrowIfNull();
 
         if (!AllowDuplicateEdges && _edges.Contains(edge))
             throw new EdgeSetException("edge exists");
@@ -63,7 +65,7 @@ public class EdgeSet<TNode, TEdge>
 
     public void AddEdges(IEnumerable<TEdge> edges)
     {
-        ArgumentNullException.ThrowIfNull(edges, nameof(edges));
+        edges.ThrowIfNull();
 
         foreach (var edge in edges)
         {
@@ -103,8 +105,9 @@ public class EdgeSet<TNode, TEdge>
         CollectionChanged?.Invoke(sender, args);
     }
 
-    public IEnumerable<TEdge> GetEdges([DisallowNull] TNode node)
-        => _edges.Where(e => e.Source.Equals(node) || e.Target.Equals(node));
+    public IEnumerable<TEdge> GetEdges([DisallowNull] TNode node) => _edges.Where(e => e.Source.Equals(node) || e.Target.Equals(node));
+
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => _edges.Where(e => e.Source.Equals(source) && e.Target.Equals(target));
 
     public bool RemoveEdge(TEdge edge)
     {
@@ -151,7 +154,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
 
     public void AddEdge(TEdge edge)
     {
-        ArgumentNullException.ThrowIfNull(edge, nameof(edge));
+        edge.ThrowIfNull();
 
         _edges.Add(edge.Id, edge);
         FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edge));
@@ -159,7 +162,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
 
     public void AddEdges(IEnumerable<TEdge> edges)
     {
-        ArgumentNullException.ThrowIfNull(edges, nameof(edges));
+        edges.ThrowIfNull();
 
         foreach (var edge in edges)
         {
@@ -203,6 +206,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
 
     public IEnumerable<TEdge> GetEdges([DisallowNull] TNode node) => _edges.Values.Where(e => e.Source.Equals(node) || e.Target.Equals(node));
 
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => _edges.Values.Where(e => e.Source.Equals(source) && e.Target.Equals(target));
 
     public bool RemoveEdge([DisallowNull] TEdge edge)
     {

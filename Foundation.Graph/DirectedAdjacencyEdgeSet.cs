@@ -35,16 +35,14 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiValueMap<TNode, TEdge> _edges;
+    private readonly MultiValueMap<TNode, TEdge> _edges = [];
 
     public DirectedAdjacencyEdgeSet()
     {
-        _edges = new MultiValueMap<TNode, TEdge>();
     }
 
     public DirectedAdjacencyEdgeSet([DisallowNull] IEnumerable<TEdge> edges)
     {
-        _edges = new MultiValueMap<TNode, TEdge>();
         foreach (var edge in edges)
             AddEdge(edge);
     }
@@ -97,6 +95,11 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge>
     {
         var inEdges = IncomingEdges(node);
         return inEdges.Concat(OutgoingEdges(node)).Distinct();
+    }
+
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target)
+    {
+        return OutgoingEdges(source).Where(x =>  x.Target.Equals(target));
     }
 
     public IEnumerable<TEdge> IncomingEdges(TNode node)
@@ -273,6 +276,11 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     {
         var inEdges = IncomingEdges(node);
         return inEdges.Concat(OutgoingEdges(node)).Distinct();
+    }
+
+    public IEnumerable<TEdge> GetEdges(TNode source, TNode target)
+    {
+        return OutgoingEdges(source).Where(x => x.Target.Equals(target));
     }
 
     public IEnumerable<TEdge> IncomingEdges(TNode node)

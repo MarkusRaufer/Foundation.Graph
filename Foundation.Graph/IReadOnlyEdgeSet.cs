@@ -62,6 +62,15 @@ public interface IReadOnlyEdgeSet<in TNode, TEdge>
     /// <param name="node"></param>
     /// <returns></returns>
     IEnumerable<TEdge> GetEdges(TNode node);
+
+    /// <summary>
+    /// Returns all edges that have the specific source and target node.
+    /// </summary>
+    /// <param name="source">source node.</param>
+    /// <param name="target">target node.</param>
+    /// <returns></returns>
+    IEnumerable<TEdge> GetEdges(TNode source, TNode target);
+
 }
 
 /// <summary>

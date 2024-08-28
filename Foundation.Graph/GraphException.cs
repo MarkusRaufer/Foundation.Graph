@@ -40,8 +40,10 @@ public class GraphException : Exception
     {
     }
 
+#if NETSTANDARD2_0
     protected GraphException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }
+#endif
 }

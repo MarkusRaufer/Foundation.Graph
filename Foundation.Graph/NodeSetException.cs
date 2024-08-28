@@ -42,8 +42,10 @@ public class NodeSetException : Exception
     {
     }
 
+    #if NETSTANDARD2_0
     protected NodeSetException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }
+#endif
 }
