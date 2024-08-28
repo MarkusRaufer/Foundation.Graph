@@ -90,11 +90,6 @@ namespace Foundation.Graph
             EdgeSet.AddEdges(edges);
         }
 
-        /// <summary>
-        /// If set to false, an exception will be thrown on adding an existing edge.
-        /// </summary>
-        public bool AllowDuplicateEdges { get; set; }
-
         public void ClearEdges()
         {
             EdgeSet.ClearEdges();
@@ -310,11 +305,6 @@ namespace Foundation.Graph
         {
             NodeSet.AddNodes(nodes);
         }
-
-        /// <summary>
-        /// If set to false, an exception will be thrown on adding an existing edge.
-        /// </summary>
-        public bool AllowDuplicateEdges { get; set; }
 
         public void Clear()
         {
@@ -535,11 +525,6 @@ namespace Foundation.Graph
         {
             NodeSet.AddNodes(nodes);
         }
-
-        /// <summary>
-        /// If set to false, an exception will be thrown on adding an existing edge.
-        /// </summary>
-        public bool AllowDuplicateEdges { get; set; }
 
         public void Clear()
         {

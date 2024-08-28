@@ -35,19 +35,21 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiValueMap<TNode, TEdge> _edges = [];
+    private readonly MultiValueMap<TNode, TEdge> _edges;
 
-    public DirectedAdjacencyEdgeSet()
+    public DirectedAdjacencyEdgeSet() : this(new MultiValueMap<TNode, TEdge>())
+    {
+        _edges = [];
+    }
+
+    public DirectedAdjacencyEdgeSet([DisallowNull] IEnumerable<TEdge> edges) : this(edges.ToMultiValueMap<TNode, TEdge>())
     {
     }
 
-    public DirectedAdjacencyEdgeSet([DisallowNull] IEnumerable<TEdge> edges)
+    public DirectedAdjacencyEdgeSet([DisallowNull] MultiValueMap<TNode, TEdge> edges)
     {
-        foreach (var edge in edges)
-            AddEdge(edge);
+        _edges = edges;
     }
-
-    public bool AllowDuplicateEdges { get; set; }
 
     public int EdgeCount => _edges.Values.Distinct().Count();
 
@@ -55,9 +57,6 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge>
 
     public void AddEdge(TEdge edge)
     {
-        if (!AllowDuplicateEdges && _edges.Contains(edge.Source, edge))
-            throw new EdgeSetException($"duplicate edges not allowed. Edge: {edge}");
-
         _edges.Add(edge.Source, edge);
         _edges.Add(edge.Target, edge);
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edge));
@@ -195,7 +194,7 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     public DirectedAdjacencyEdgeSet(TEdgeSet edgeSet)
     {
         EdgeSet = edgeSet.ThrowIfNull(nameof(edgeSet));
-        _adjacent = new ();
+        _adjacent = [];
 
         EdgeSet.CollectionChanged += EdgeSet_CollectionChanged;
     }
@@ -226,8 +225,6 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 
         EdgeSet.AddEdges(edges);
     }
-
-    public bool AllowDuplicateEdges { get; set; }
 
     public void ClearEdges()
     {

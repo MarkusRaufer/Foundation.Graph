@@ -51,10 +51,6 @@ public class UndirectedGraph<TNode, TEdge>
         Dispose(false);
     }
 
-    public bool AllowDuplicateEdges => false;
-
-
-
     public void Dispose()
     {
         Dispose(true);

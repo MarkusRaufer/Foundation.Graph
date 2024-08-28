@@ -86,10 +86,6 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
     
     public void AddEdge(TEdge edge)
     {
-        if (!AllowDuplicateEdges && EdgeSet.ExistsEdge(edge))
-            throw new ArgumentOutOfRangeException(nameof(edge), "edge exists");
-
-
         AddIncomingEdge(edge);
         AddOutgoingEdge(edge);
 
@@ -132,11 +128,6 @@ public class DirectedEdgeSet<TNode, TEdge, TEdgeSet>
         if (edges.Contains(edge)) return;
         edges.Add(edge);
     }
-
-    /// <summary>
-    /// If set to false, an exception will be thrown on adding an existing edge.
-    /// </summary>
-    public bool AllowDuplicateEdges { get; set; }
 
     public void ClearEdges()
     {
@@ -352,8 +343,6 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 
         if (!edges.ContainsKey(edge.Id)) edges.Add(edge.Id, edge);
     }
-
-    public bool AllowDuplicateEdges => false;
 
     public void ClearEdges()
     {

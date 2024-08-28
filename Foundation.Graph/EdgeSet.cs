@@ -26,7 +26,6 @@ namespace Foundation.Graph;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml.Linq;
 
 public class EdgeSet<TNode, TEdge>
     : IEdgeSet<TNode, TEdge>
@@ -38,10 +37,10 @@ public class EdgeSet<TNode, TEdge>
 
     private readonly ICollection<TEdge> _edges;
 
-    public EdgeSet()
+    public EdgeSet() : this([])
     {
-        _edges = new List<TEdge>();
     }
+
     public EdgeSet([DisallowNull] IEnumerable<TEdge> edges) : this(edges.ToList())
     {
     }
@@ -55,37 +54,33 @@ public class EdgeSet<TNode, TEdge>
     {
         edge.ThrowIfNull();
 
-        if (!AllowDuplicateEdges && _edges.Contains(edge))
-            throw new EdgeSetException("edge exists");
-
+        var count = _edges.Count;
         _edges.Add(edge);
         
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edge));
+        if (_edges.Count > count)
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edge));
     }
 
     public void AddEdges(IEnumerable<TEdge> edges)
     {
         edges.ThrowIfNull();
 
+        var count = _edges.Count;
         foreach (var edge in edges)
         {
-            if (!AllowDuplicateEdges && _edges.Contains(edge))
-                throw new EdgeSetException("edge exists");
-            
             _edges.Add(edge);
         }
 
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edges.ToArray()));
+        if (_edges.Count > count)
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edges.ToArray()));
     }
-
-    /// <summary>
-    /// If set to false, an exception will be thrown on adding an existing edge.
-    /// </summary>
-    public bool AllowDuplicateEdges { get; set; }
 
     public void ClearEdges()
     {
+        if (_edges.Count == 0) return;
+
         _edges.Clear();
+        
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
@@ -140,12 +135,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly IDictionary<TEdgeId, TEdge> _edges = new Dictionary<TEdgeId, TEdge>();
-
-    /// <summary>
-    /// Returns always false, because edges with same Id are not allowed.
-    /// </summary>
-    public bool AllowDuplicateEdges => false;
+    private readonly Dictionary<TEdgeId, TEdge> _edges = [];
 
     public int EdgeCount => _edges.Count;
 
@@ -156,23 +146,26 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
     {
         edge.ThrowIfNull();
 
+        var count = _edges.Count;
         _edges.Add(edge.Id, edge);
-        FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edge));
+
+        if (_edges.Count > count)
+            FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edge));
     }
 
     public void AddEdges(IEnumerable<TEdge> edges)
     {
         edges.ThrowIfNull();
 
+        var count = _edges.Count;
+
         foreach (var edge in edges)
         {
-            if (!AllowDuplicateEdges && _edges.ContainsKey(edge.Id))
-                throw new EdgeSetException("edge exists");
-
             _edges.Add(edge.Id, edge);
         }
 
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edges.ToArray()));
+        if (_edges.Count > count)
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, edges.ToArray()));
     }
 
     public void ClearEdges()

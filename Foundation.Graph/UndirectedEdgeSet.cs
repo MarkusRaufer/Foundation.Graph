@@ -54,8 +54,6 @@ public class UndirectedEdgeSet<TNode, TEdge>
         AddEdges(edges);
     }
 
-    public bool AllowDuplicateEdges => false;
-
     public int EdgeCount => _edge2Nodes.Keys.Count;
 
     public IEnumerable<TEdge> Edges => _edge2Nodes.Keys;
