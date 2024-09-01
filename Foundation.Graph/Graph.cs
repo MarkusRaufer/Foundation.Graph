@@ -25,7 +25,6 @@ using Foundation.ComponentModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using System.Xml.Linq;
 
 namespace Foundation.Graph
 {
@@ -373,11 +372,13 @@ namespace Foundation.Graph
             CollectionChanged?.Invoke(sender, args);
         }
 
-        public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
-
         public IEnumerable<TEdge> GetEdges(TNodeId nodeId) => EdgeSet.GetEdges(nodeId);
 
         public IEnumerable<TEdge> GetEdges(TNodeId source, TNodeId target) => EdgeSet.GetEdges(source, target);
+
+        public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
+
+        public IEnumerable<TNode> GetNodes(IEnumerable<TNodeId> nodeIds) => NodeSet.GetNodes(nodeIds);
 
         public int NodeCount
         {
@@ -565,6 +566,8 @@ namespace Foundation.Graph
         public IEnumerable<TEdge> GetEdges(TNodeId source, TNodeId target) => EdgeSet.GetEdges(source, target);
 
         public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
+
+        public IEnumerable<TNode> GetNodes(IEnumerable<TNodeId> nodeIds) => NodeSet.GetNodes(nodeIds);
 
         public int NodeCount => NodeSet.NodeCount;
 

@@ -68,6 +68,13 @@ public interface IReadOnlyNodeSet<TNodeId, TNode>
     Option<TNode> GetNode(TNodeId nodeId);
 
     /// <summary>
+    /// Returns a list of nodes from their identifiers.
+    /// </summary>
+    /// <param name="nodeIds">A list of node identifiers.</param>
+    /// <returns>List of nodes.</returns>
+    IEnumerable<TNode> GetNodes(IEnumerable<TNodeId> nodeIds);
+
+    /// <summary>
     /// Number of nodes.
     /// </summary>
     int NodeCount { get; }

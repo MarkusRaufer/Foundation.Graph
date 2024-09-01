@@ -125,6 +125,7 @@ public class NodeSet<TNodeId, TNode>
         _nodes = nodes.ThrowIfNull(nameof(nodes));
     }
 
+    /// <inheritdoc/>
     public void AddNode(TNodeId nodeId, TNode node)
     {
         if (ExistsNode(nodeId))
@@ -134,6 +135,7 @@ public class NodeSet<TNodeId, TNode>
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node));
     }
 
+    /// <inheritdoc/>
     public void AddNodes(IEnumerable<(TNodeId, TNode)> nodes)
     {
         foreach (var (nodeId, node) in nodes)
@@ -144,12 +146,14 @@ public class NodeSet<TNodeId, TNode>
         }
     }
 
+    /// <inheritdoc/>
     public void ClearNodes()
     {
         _nodes.Value.Clear();
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
+    /// <inheritdoc/>
     public bool ExistsNode(TNodeId id)
     {
         return _nodes.Value.ContainsKey(id);
@@ -160,7 +164,17 @@ public class NodeSet<TNodeId, TNode>
         CollectionChanged?.Invoke(sender, args);
     }
 
+    /// <inheritdoc/>
     public Option<TNode> GetNode(TNodeId nodeId) => TryGetNode(nodeId, out TNode? node) ? Option.Maybe(node) : Option.None<TNode>();
+
+    /// <inheritdoc/>
+    public IEnumerable<TNode> GetNodes(IEnumerable<TNodeId> nodeIds)
+    {
+        foreach(var nodeId in nodeIds)
+        {
+            if(_nodes.Value.TryGetValue(nodeId, out var node)) yield return node;
+        }
+    }
 
     public int NodeCount => _nodes.Value.Count;
 
@@ -175,12 +189,14 @@ public class NodeSet<TNodeId, TNode>
         return true;
     }
 
+    /// <inheritdoc/>
     public void RemoveNodes([DisallowNull] IEnumerable<TNodeId> nodes)
     {
         foreach (var node in nodes)
             RemoveNode(node);
     }
 
+    /// <inheritdoc/>
     public bool TryGetNode(TNodeId nodeId, [NotNullWhen(true)] out TNode? node)
     {
         return _nodes.Value.TryGetValue(nodeId, out node) && node is not null;
