@@ -35,9 +35,9 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiValueMap<TNode, TEdge> _edges;
+    private readonly MultiMap<TNode, TEdge> _edges;
 
-    public DirectedAdjacencyEdgeSet() : this(new MultiValueMap<TNode, TEdge>())
+    public DirectedAdjacencyEdgeSet() : this(new MultiMap<TNode, TEdge>())
     {
         _edges = [];
     }
@@ -46,7 +46,7 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdge>
     {
     }
 
-    public DirectedAdjacencyEdgeSet([DisallowNull] MultiValueMap<TNode, TEdge> edges)
+    public DirectedAdjacencyEdgeSet([DisallowNull] MultiMap<TNode, TEdge> edges)
     {
         _edges = edges;
     }
@@ -188,7 +188,7 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiValueMap<TNode, TEdge> _adjacent;
+    private readonly MultiMap<TNode, TEdge> _adjacent;
     private bool _disposed;
 
     public DirectedAdjacencyEdgeSet(TEdgeSet edgeSet)

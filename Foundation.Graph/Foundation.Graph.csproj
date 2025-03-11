@@ -13,11 +13,11 @@
 		<PackageId>Foundation.Graph</PackageId>
 		<PackageTags>in memory graph;graph search</PackageTags>
 		<ProductName>Foundation.Graph</ProductName>
-		<Version>1.0.5</Version>
+		<Version>1.6.9-rc.3</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Foundation" Version="1.3.2" />
+		<PackageReference Include="Foundation" Version="1.6.9-rc.3" />
 	</ItemGroup>
 
 </Project>

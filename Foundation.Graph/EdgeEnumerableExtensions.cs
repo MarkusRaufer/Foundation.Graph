@@ -4,11 +4,11 @@ namespace Foundation.Graph;
 
 public static class EdgeEnumerableExtensions
 {
-    public static MultiValueMap<TNode, TEdge> ToMultiValueMap<TNode, TEdge>(this IEnumerable<TEdge> edges)
+    public static MultiMap<TNode, TEdge> ToMultiValueMap<TNode, TEdge>(this IEnumerable<TEdge> edges)
         where TEdge : IEdge<TNode>
         where TNode : notnull
     {
-        MultiValueMap<TNode, TEdge> map = [];
+        MultiMap<TNode, TEdge> map = [];
 
         foreach(var edge in edges)
         {

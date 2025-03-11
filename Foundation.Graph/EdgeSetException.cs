@@ -37,4 +37,3 @@ public class EdgeSetException : Exception
         StreamingContext context) : base(info, context) { }
 #endif
 }
-

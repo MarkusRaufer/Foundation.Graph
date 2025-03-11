@@ -40,13 +40,13 @@ public class UndirectedEdgeSet<TNode, TEdge>
 {
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private readonly MultiValueMap<TNode, TEdge> _node2Edges;
-    private readonly MultiValueMap<TEdge, TNode> _edge2Nodes;
+    private readonly MultiMap<TNode, TEdge> _node2Edges;
+    private readonly MultiMap<TEdge, TNode> _edge2Nodes;
 
     public UndirectedEdgeSet()
     {
-        _node2Edges = new MultiValueMap<TNode, TEdge>();
-        _edge2Nodes = new MultiValueMap<TEdge, TNode>();
+        _node2Edges = [];
+        _edge2Nodes = [];
     }
 
     public UndirectedEdgeSet(IEnumerable<TEdge> edges) : this()
