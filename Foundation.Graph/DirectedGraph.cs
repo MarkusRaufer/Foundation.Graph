@@ -225,6 +225,7 @@ public abstract class DirectedGraph<TNodeId, TNode, TEdgeId, TEdge, TNodeSet, TE
     where TEdge : IEdge<TEdgeId, TNodeId>
     where TEdgeId : notnull
     where TEdgeSet : IDirectedEdgeSet<TNodeId, TEdgeId, TEdge>, INotifyCollectionChanged
+    where TNode : notnull
     where TNodeId : notnull
     where TNodeSet : INodeSet<TNodeId, TNode>, INotifyCollectionChanged
 {

@@ -26,8 +26,8 @@
 /// <summary>
 /// Contract for a mutable edge set.
 /// </summary>
-/// <typeparam name="TNode">Typ der Knoten.</typeparam>
-/// <typeparam name="TEdge">Typ der Kanten.</typeparam>
+/// <typeparam name="TNode">Type of the nodes.</typeparam>
+/// <typeparam name="TEdge">Type of the edges.</typeparam>
 public interface IMutableEdgeSet<in TNode, TEdge>
     where TEdge : IEdge<TNode>
 {
