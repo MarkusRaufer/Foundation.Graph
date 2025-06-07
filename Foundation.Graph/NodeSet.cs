@@ -196,6 +196,13 @@ public class NodeSet<TNodeId, TNode>
             RemoveNode(node);
     }
 
+    public bool ReplaceNode(TNodeId id, TNode node)
+    {
+        if (!ExistsNode(id)) return false;
+        _nodes.Value[id] = node;
+        return true;
+    }
+
     /// <inheritdoc/>
     public bool TryGetNode(TNodeId nodeId, [NotNullWhen(true)] out TNode? node)
     {

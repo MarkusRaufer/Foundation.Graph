@@ -85,4 +85,12 @@ public interface IMutableNodeSet<TNodeId, TNode>
     /// </summary>
     /// <param name="nodes"></param>
     void RemoveNodes(IEnumerable<TNodeId> nodeIds);
+
+    /// <summary>
+    /// Replaces a node with a specific id.
+    /// </summary>
+    /// <param name="nodeId">The id of the existing node.</param>
+    /// <param name="node">The new node that should replace the existing node.</param>
+    /// <returns></returns>
+    bool ReplaceNode(TNodeId nodeId, TNode node);
 }

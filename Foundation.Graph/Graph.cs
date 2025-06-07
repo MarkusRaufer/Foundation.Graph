@@ -453,6 +453,8 @@ namespace Foundation.Graph
                 RemoveNode(node);
         }
 
+        public virtual bool ReplaceNode(TNodeId id, TNode node) => NodeSet.ReplaceNode(id, node);
+
         public bool TryGetNode(TNodeId nodeId, [MaybeNullWhen(false)] out TNode node)
         {
             return NodeSet.TryGetNode(nodeId, out node);
@@ -617,5 +619,7 @@ namespace Foundation.Graph
         {
             return NodeSet.TryGetNode(nodeId, out node);
         }
+
+        public abstract bool ReplaceNode(TNodeId nodeId, TNode node);
     }
 }

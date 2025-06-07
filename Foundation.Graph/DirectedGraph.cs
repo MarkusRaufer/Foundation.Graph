@@ -287,5 +287,7 @@ public abstract class DirectedGraph<TNodeId, TNode, TEdgeId, TEdge, TNodeSet, TE
 
         return false;
     }
+
+    public override bool ReplaceNode(TNodeId nodeId, TNode node) => NodeSet.ReplaceNode(nodeId, node);
 }
 
