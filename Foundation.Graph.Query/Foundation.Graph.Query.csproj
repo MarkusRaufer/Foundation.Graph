@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<PackageOutputPath>$(LOCAL_NUGET)\</PackageOutputPath>
+		<Copyright>Markus Raufer</Copyright>
+		<Authors>Markus Raufer</Authors>
+		<Description>A query library for Foundation.Graph.</Description>
+		<PackageId>Foundation.Graph.Query</PackageId>
+		<PackageTags>graph query; graph search</PackageTags>
+		<ProductName>Foundation.Grap.Query</ProductName>
+		<Version>1.6.25-rc.10</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Foundation" Version="1.6.25-rc.1" />
+		<PackageReference Include="Foundation.Graph" Version="1.6.25-rc.5" />
+	</ItemGroup>
+
+</Project>

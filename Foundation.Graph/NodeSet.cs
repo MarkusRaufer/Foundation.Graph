@@ -50,6 +50,7 @@ public class NodeSet<TNode>
         _nodes = new HashSet<TNode>(nodes.ThrowIfNull());
     }
 
+    /// <inheritdoc/>
     public void AddNode([DisallowNull] TNode node)
     {
         var count = _nodes.Count;
@@ -59,6 +60,7 @@ public class NodeSet<TNode>
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node));
     }
 
+    /// <inheritdoc/>
     public void AddNodes([DisallowNull] IEnumerable<TNode> nodes)
     {
         foreach (var node in nodes)
@@ -68,12 +70,14 @@ public class NodeSet<TNode>
         }
     }
 
+    /// <inheritdoc/>
     public void ClearNodes()
     {
         _nodes.Clear();
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
+    /// <inheritdoc/>
     public bool ExistsNode([DisallowNull] TNode node) => _nodes.Contains(node);
 
     protected void FireCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -81,10 +85,13 @@ public class NodeSet<TNode>
         CollectionChanged?.Invoke(sender, args);
     }
 
+    /// <inheritdoc/>
     public int NodeCount => _nodes.Count;
 
+    /// <inheritdoc/>
     public IEnumerable<TNode> Nodes => _nodes;
 
+    /// <inheritdoc/>
     public bool RemoveNode(TNode? node)
     {
         if (null == node || !_nodes.Remove(node)) return false;
@@ -93,6 +100,7 @@ public class NodeSet<TNode>
         return true;
     }
 
+    /// <inheritdoc/>
     public void RemoveNodes([DisallowNull] IEnumerable<TNode> nodes)
     {
         foreach (var node in nodes)
@@ -176,10 +184,25 @@ public class NodeSet<TNodeId, TNode>
         }
     }
 
+    /// <inheritdoc/>
+    public IEnumerable<KeyValuePair<TNodeId, TNode>> GetNodeTuples(IEnumerable<TNodeId> nodeIds)
+    {
+        foreach (var nodeId in nodeIds)
+        {
+            if (_nodes.Value.TryGetValue(nodeId, out var node)) yield return new KeyValuePair<TNodeId, TNode>(nodeId, node);
+        }
+    }
+
+    /// <inheritdoc/>
     public int NodeCount => _nodes.Value.Count;
 
+    /// <inheritdoc/>
     public IEnumerable<TNodeId> NodeIds => _nodes.Value.Keys;
 
+    /// <inheritdoc/>
+    public IEnumerable<KeyValuePair<TNodeId, TNode>> NodeTuples => _nodes.Value;
+
+    /// <inheritdoc/>
     public IEnumerable<TNode> Nodes => _nodes.Value.Values;
 
     public bool RemoveNode(TNodeId id)
@@ -196,6 +219,7 @@ public class NodeSet<TNodeId, TNode>
             RemoveNode(node);
     }
 
+    /// <inheritdoc/>
     public bool ReplaceNode(TNodeId id, TNode node)
     {
         if (!ExistsNode(id)) return false;

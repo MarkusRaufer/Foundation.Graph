@@ -32,7 +32,7 @@ public interface IReadOnlyNodeSet<TNode>
     /// <summary>
     /// Checks, if node exists.
     /// </summary>
-    /// <param name="node">Node which is searched.</param>
+    /// <param name="node">State which is searched.</param>
     /// <returns></returns>
     bool ExistsNode(TNode node);
 
@@ -56,7 +56,7 @@ public interface IReadOnlyNodeSet<TNodeId, TNode>
     /// <summary>
     /// Returns true, if node exists.
     /// </summary>
-    /// <param name="node">Node which is searched.</param>
+    /// <param name="node">State which is searched.</param>
     /// <returns></returns>
     bool ExistsNode(TNodeId id);
 
@@ -66,6 +66,13 @@ public interface IReadOnlyNodeSet<TNodeId, TNode>
     /// <param name="nodeId"></param>
     /// <returns></returns>
     Option<TNode> GetNode(TNodeId nodeId);
+
+    /// <summary>
+    /// Returns a list of node ids with their nodes.
+    /// </summary>
+    /// <param name="nodeIds"></param>
+    /// <returns></returns>
+    IEnumerable<KeyValuePair<TNodeId, TNode>> GetNodeTuples(IEnumerable<TNodeId> nodeIds);
 
     /// <summary>
     /// Returns a list of nodes from their identifiers.
@@ -83,6 +90,11 @@ public interface IReadOnlyNodeSet<TNodeId, TNode>
     /// List of node ids.
     /// </summary>
     IEnumerable<TNodeId> NodeIds { get; }
+
+    /// <summary>
+    /// List of node ids with their nodes.
+    /// </summary>
+    IEnumerable<KeyValuePair<TNodeId, TNode>> NodeTuples { get; }
 
     /// <summary>
     /// List of nodes.

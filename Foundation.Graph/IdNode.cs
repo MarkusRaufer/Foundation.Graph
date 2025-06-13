@@ -34,41 +34,41 @@ public class IdNode
     public static IdNode<TId, TNode> New<TId, TNode>(TId id, TNode node) where TId : IComparable<TId>, IEquatable<TId> => new (id, node);
 }
 
-public readonly struct IdNode<TId, TNode> 
+public readonly struct IdNode<TId, TState> 
     : IIdentifiable<TId>
-    , IComparable<IdNode<TId, TNode>>
-    , IEquatable<IdNode<TId, TNode>>
+    , IComparable<IdNode<TId, TState>>
+    , IEquatable<IdNode<TId, TState>>
     where TId : IComparable<TId>, IEquatable<TId>
 {
-    public IdNode(TId id, TNode node)
+    public IdNode(TId id, TState node)
     {
         Id = id.ThrowIfNull();
-        Node = node.ThrowIfNull();
+        State = node.ThrowIfNull();
     }
 
-    public static bool operator ==(IdNode<TId, TNode> lhs, IdNode<TId, TNode> rhs) => lhs.Equals(rhs);
+    public static bool operator ==(IdNode<TId, TState> lhs, IdNode<TId, TState> rhs) => lhs.Equals(rhs);
 
-    public static bool operator !=(IdNode<TId, TNode> lhs, IdNode<TId, TNode> rhs) => !(lhs == rhs);
+    public static bool operator !=(IdNode<TId, TState> lhs, IdNode<TId, TState> rhs) => !(lhs == rhs);
 
-    public static bool operator >(IdNode<TId, TNode> lhs, IdNode<TId, TNode> rhs) => lhs.CompareTo(rhs) == 1;
+    public static bool operator >(IdNode<TId, TState> lhs, IdNode<TId, TState> rhs) => lhs.CompareTo(rhs) == 1;
 
-    public static bool operator >=(IdNode<TId, TNode> lhs, IdNode<TId, TNode> rhs) => lhs.CompareTo(rhs) is >= 0;
+    public static bool operator >=(IdNode<TId, TState> lhs, IdNode<TId, TState> rhs) => lhs.CompareTo(rhs) is >= 0;
 
-    public static bool operator <(IdNode<TId, TNode> lhs, IdNode<TId, TNode> rhs) => lhs.CompareTo(rhs) == -1;
+    public static bool operator <(IdNode<TId, TState> lhs, IdNode<TId, TState> rhs) => lhs.CompareTo(rhs) == -1;
 
-    public static bool operator <=(IdNode<TId, TNode> lhs, IdNode<TId, TNode> rhs) => lhs.CompareTo(rhs) is <= 0;
+    public static bool operator <=(IdNode<TId, TState> lhs, IdNode<TId, TState> rhs) => lhs.CompareTo(rhs) is <= 0;
 
     public TId Id { get; }
 
-    public int CompareTo(IdNode<TId, TNode> other) => Id.CompareTo(other.Id);
+    public int CompareTo(IdNode<TId, TState> other) => Id.CompareTo(other.Id);
 
-    public bool Equals(IdNode<TId, TNode> other) => Id.Equals(other.Id);
+    public bool Equals(IdNode<TId, TState> other) => Id.Equals(other.Id);
 
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is IdNode<TId, TNode> other && Equals(other);
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is IdNode<TId, TState> other && Equals(other);
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    public TNode Node { get; }
+    public TState State { get; }
 
     public override string ToString() => $"Id={Id}";
 }

@@ -284,43 +284,50 @@ namespace Foundation.Graph
             Dispose(false);
         }
 
+        /// <inheritdoc/>
         public virtual void AddEdge(TEdge edge)
         {
             EdgeSet.AddEdge(edge);
         }
 
+        /// <inheritdoc/>
         public virtual void AddEdges(IEnumerable<TEdge> edges)
         {
             EdgeSet.AddEdges(edges);
         }
 
+        /// <inheritdoc/>
         public virtual void AddNode(TNodeId nodeId, [DisallowNull] TNode node)
         {
             NodeSet.AddNode(nodeId, node);
         }
 
-
+        /// <inheritdoc/>
         public virtual void AddNodes(IEnumerable<(TNodeId, TNode)> nodes)
         {
             NodeSet.AddNodes(nodes);
         }
 
+        /// <inheritdoc/>
         public void Clear()
         {
             ClearEdges();
             ClearNodes();
         }
 
+        /// <inheritdoc/>
         public void ClearEdges()
         {
             EdgeSet.ClearEdges();
         }
 
+        /// <inheritdoc/>
         public void ClearNodes()
         {
             NodeSet.ClearNodes();
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Dispose(true);
@@ -338,11 +345,13 @@ namespace Foundation.Graph
             }
         }
 
+        /// <inheritdoc/>
         public int EdgeCount
         {
             get { return EdgeSet.EdgeCount; }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<TEdge> Edges
         {
             get { return EdgeSet.Edges; }
@@ -352,50 +361,68 @@ namespace Foundation.Graph
 
         protected TEdgeSet EdgeSet { get; private set; }
 
+        /// <inheritdoc/>
         public bool ExistsEdge(TEdge edge)
         {
             return EdgeSet.ExistsEdge(edge);
         }
 
+        /// <inheritdoc/>
         public bool ExistsEdge(TNodeId source, TNodeId target)
         {
             return EdgeSet.ExistsEdge(source, target);
         }
 
+        /// <inheritdoc/>
         public bool ExistsNode(TNodeId id)
         {
             return NodeSet.ExistsNode(id);
         }
 
+        /// <inheritdoc/>
         protected void FireCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             CollectionChanged?.Invoke(sender, args);
         }
 
+        /// <inheritdoc/>
         public IEnumerable<TEdge> GetEdges(TNodeId nodeId) => EdgeSet.GetEdges(nodeId);
 
+        /// <inheritdoc/>
         public IEnumerable<TEdge> GetEdges(TNodeId source, TNodeId target) => EdgeSet.GetEdges(source, target);
 
+        /// <inheritdoc/>
         public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
 
+        /// <inheritdoc/>
         public IEnumerable<TNode> GetNodes(IEnumerable<TNodeId> nodeIds) => NodeSet.GetNodes(nodeIds);
 
+        /// <inheritdoc/>
+        public IEnumerable<KeyValuePair<TNodeId, TNode>> GetNodeTuples(IEnumerable<TNodeId> nodeIds)
+            => NodeSet.GetNodeTuples(nodeIds);
+
+        /// <inheritdoc/>
         public int NodeCount
         {
             get { return NodeSet.NodeCount; }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<TNodeId> NodeIds
         {
             get { return NodeSet.NodeIds; }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<TNode> Nodes
         {
             get { return NodeSet.Nodes; }
         }
 
         protected TNodeSet NodeSet { get; private set; }
+
+        /// <inheritdoc/>
+        public IEnumerable<KeyValuePair<TNodeId, TNode>> NodeTuples => NodeSet.NodeTuples;
 
         private void OnEdgeSetChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -411,16 +438,19 @@ namespace Foundation.Graph
             ObjectChanged?.Invoke(this, new ObjectChangedEventArgs(this, e));
         }
 
+        /// <inheritdoc/>
         public virtual bool RemoveEdge(TEdge edge)
         {
             return EdgeSet.RemoveEdge(edge);
         }
 
+        /// <inheritdoc/>
         public virtual void RemoveEdges(IEnumerable<TEdge> edges)
         {
             EdgeSet.RemoveEdges(edges);
         }
 
+        /// <inheritdoc/>
         public virtual bool RemoveNode(TNodeId id)
         {
             if (NodeSet.RemoveNode(id))
@@ -447,14 +477,17 @@ namespace Foundation.Graph
             return false;
         }
 
+        /// <inheritdoc/>
         public virtual void RemoveNodes(IEnumerable<TNodeId> nodes)
         {
             foreach (var node in nodes.ToList())
                 RemoveNode(node);
         }
 
+        /// <inheritdoc/>
         public virtual bool ReplaceNode(TNodeId id, TNode node) => NodeSet.ReplaceNode(id, node);
 
+        /// <inheritdoc/>
         public bool TryGetNode(TNodeId nodeId, [MaybeNullWhen(false)] out TNode node)
         {
             return NodeSet.TryGetNode(nodeId, out node);
@@ -509,38 +542,47 @@ namespace Foundation.Graph
             EdgeSet.CollectionChanged -= OnEdgeSetChanged;
         }
 
+        /// <inheritdoc/>
         public virtual void AddEdge(TEdge edge)
         {
             EdgeSet.AddEdge(edge);
         }
 
+        /// <inheritdoc/>
         public virtual void AddEdges(IEnumerable<TEdge> edges)
         {
             EdgeSet.AddEdges(edges);
         }
 
+        /// <inheritdoc/>
         public virtual void AddNode(TNodeId nodeId, TNode node)
         {
             NodeSet.AddNode(nodeId, node);
         }
 
+        /// <inheritdoc/>
         public virtual void AddNodes(IEnumerable<(TNodeId, TNode)> nodes)
         {
             NodeSet.AddNodes(nodes);
         }
 
+        /// <inheritdoc/>
         public void Clear()
         {
             ClearEdges();
             ClearNodes();
         }
 
+        /// <inheritdoc/>
         public void ClearEdges() => EdgeSet.ClearEdges();
 
+        /// <inheritdoc/>
         public void ClearNodes() => NodeSet.ClearNodes();
 
+        /// <inheritdoc/>
         public int EdgeCount => EdgeSet.EdgeCount;
 
+        /// <inheritdoc/>
         public IEnumerable<TEdge> Edges => EdgeSet.Edges;
 
         protected Func<TNodeId, TNodeId, TEdge>? EdgeFactory { get; }
@@ -548,12 +590,16 @@ namespace Foundation.Graph
         [NotNull]
         protected TEdgeSet EdgeSet { get; private set; }
 
+        /// <inheritdoc/>
         public bool ExistsEdge(TEdge edge) => EdgeSet.ExistsEdge(edge);
 
+        /// <inheritdoc/>
         public bool ExistsEdge(TEdgeId id) => EdgeSet.ExistsEdge(id);
 
+        /// <inheritdoc/>
         public bool ExistsEdge(TNodeId source, TNodeId target) => EdgeSet.ExistsEdge(source, target);
 
+        /// <inheritdoc/>
         public bool ExistsNode(TNodeId id) => NodeSet.ExistsNode(id);
 
         protected void FireCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -561,24 +607,39 @@ namespace Foundation.Graph
             CollectionChanged?.Invoke(sender, args);
         }
 
+        /// <inheritdoc/>
         public Option<TEdge> GetEdge(TEdgeId id) => EdgeSet.GetEdge(id);
 
+        /// <inheritdoc/>
         public IEnumerable<TEdge> GetEdges(TNodeId node) => EdgeSet.GetEdges(node);
 
+        /// <inheritdoc/>
         public IEnumerable<TEdge> GetEdges(TNodeId source, TNodeId target) => EdgeSet.GetEdges(source, target);
 
+        /// <inheritdoc/>
         public Option<TNode> GetNode(TNodeId nodeId) => NodeSet.GetNode(nodeId);
 
+        /// <inheritdoc/>
         public IEnumerable<TNode> GetNodes(IEnumerable<TNodeId> nodeIds) => NodeSet.GetNodes(nodeIds);
 
+        /// <inheritdoc/>
+        public IEnumerable<KeyValuePair<TNodeId, TNode>> GetNodeTuples(IEnumerable<TNodeId> nodeIds)
+            => NodeSet.GetNodeTuples(nodeIds);
+        
         public int NodeCount => NodeSet.NodeCount;
 
+        /// <inheritdoc/>
         public IEnumerable<TNodeId> NodeIds =>  NodeSet.NodeIds;
 
+        /// <inheritdoc/>
+        public IEnumerable<KeyValuePair<TNodeId, TNode>> NodeTuples => NodeSet.NodeTuples;
+
+        /// <inheritdoc/>
         public IEnumerable<TNode> Nodes => NodeSet.Nodes;
 
         [NotNull]
         protected TNodeSet NodeSet { get; private set; }
+
 
         private void OnEdgeSetChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -594,32 +655,41 @@ namespace Foundation.Graph
             ObjectChanged?.Invoke(this, new ObjectChangedEventArgs(this, e));
         }
 
+        /// <inheritdoc/>
         public virtual bool RemoveEdge(TEdge edge)
         {
             return EdgeSet.RemoveEdge(edge);
         }
+
+        /// <inheritdoc/>
         public bool RemoveEdge(TEdgeId edgeId) => EdgeSet.RemoveEdge(edgeId);
 
+        /// <inheritdoc/>
         public virtual void RemoveEdges(IEnumerable<TEdge> edges)
         {
             EdgeSet.RemoveEdges(edges);
         }
 
+        /// <inheritdoc/>
         public void RemoveEdges(IEnumerable<TEdgeId> edgeIds) => EdgeSet.RemoveEdges(edgeIds);
 
+        /// <inheritdoc/>
         public abstract bool RemoveNode(TNodeId id);
 
+        /// <inheritdoc/>
         public virtual void RemoveNodes(IEnumerable<TNodeId> nodes)
         {
             foreach (var node in nodes.ToList())
                 RemoveNode(node);
         }
 
+        /// <inheritdoc/>
         public bool TryGetNode(TNodeId nodeId, [NotNullWhen(true)] out TNode? node)
         {
             return NodeSet.TryGetNode(nodeId, out node);
         }
 
+        /// <inheritdoc/>
         public abstract bool ReplaceNode(TNodeId nodeId, TNode node);
     }
 }
