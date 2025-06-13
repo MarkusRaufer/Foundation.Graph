@@ -4,8 +4,9 @@ namespace Foundation.Graph.Query;
 
 public partial class GraphQueryClient<TNodeId, TNode, TEdge, TGraph>
     where TEdge : IEdge<TNodeId>
-    where TNodeId : notnull
     where TGraph : IGraph<TNodeId, TNode, TEdge>
+    where TNode : notnull
+    where TNodeId : notnull
 {
     public Func<IEnumerable<KeyValuePair<TNodeId, TNode>>> NewQuery(string json, Func<TNode, IDictionary<string, object?>, bool> nodePredicate)
     {

@@ -23,6 +23,7 @@ public class JsonGraphQueryTests
                           .V(x => x.Id == Id.New("I1"))
                           .Out((Node x) => true)
                           .Find()
+                          .Execute()
                           .ToArray();
         var json =
             """

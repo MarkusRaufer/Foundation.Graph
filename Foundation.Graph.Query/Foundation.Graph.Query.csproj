@@ -12,7 +12,7 @@
 		<PackageId>Foundation.Graph.Query</PackageId>
 		<PackageTags>graph query; graph search</PackageTags>
 		<ProductName>Foundation.Grap.Query</ProductName>
-		<Version>1.6.25-rc.10</Version>
+		<Version>1.6.25-rc.16</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

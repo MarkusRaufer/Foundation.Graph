@@ -28,6 +28,7 @@ public class GraphQueryClientTests
                               .V(x => x.Id == Id.New("I1"))
                               .Out((Node x) => true)
                               .Find()
+                              .Execute()
                               .ToArray();
         // Assert
         lineItems.Length.ShouldBe(2);
@@ -64,6 +65,7 @@ public class GraphQueryClientTests
                           .V(x => x.Id == Id.New("I1"))
                           .Out((Node x) => true)
                           .FindPath()
+                          .Execute()
                           .ToArray();
 
         // Assert
@@ -106,6 +108,7 @@ public class GraphQueryClientTests
                           .V(x => x.Id == Id.New("Sales"))
                           .Repeat(x => x.Out((Node x) => true), x => $"{x.State[nameof(ITypedObject<Any>.ObjectType)]}" == invoiceLineItemObjectType)
                           .FindPath()
+                          .Execute()
                           .ToArray();
 
         // Assert
@@ -161,6 +164,7 @@ public class GraphQueryClientTests
                           .V(x => x.Id == Id.New("Sales"))
                           .Repeat(x => x.Out((Node x) => true), x => x.Id == invoiceLineItem.Id)
                           .FindPath()
+                          .Execute()
                           .ToArray();
 
         // Assert

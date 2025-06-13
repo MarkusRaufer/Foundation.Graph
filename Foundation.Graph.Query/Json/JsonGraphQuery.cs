@@ -19,7 +19,7 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
     where TGraph : IGraph<TNodeId, TNode, TEdge>
 {
     private IGraphQuery<TNodeId, TNode, TEdge, TGraph>? _graphQuery;
-    private IVertices<TNodeId, TNode, TEdge, TGraph>? _vertices;
+    private IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? _queryElements;
     private Func<TNode, IDictionary<string, object?>, bool>? _nodePredicate;
     private Func<TNodeId, IDictionary<string, object?>, bool>? _nodeIdPredicate;
 
@@ -45,11 +45,11 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
 
         return jsonQuery.Method switch
         {
-            QueryMethod.Find => If.Value(_vertices)
-                                  .NotNull(x => x.Find())
+            QueryMethod.Find => If.Value(_queryElements)
+                                  .NotNull(x => x.Find().Execute())
                                   .Else(() => []),
-            QueryMethod.FindPath => If.Value(_vertices)
-                                      .NotNull(x => x.FindPath())
+            QueryMethod.FindPath => If.Value(_queryElements)
+                                      .NotNull(x => x.FindPath().Execute())
                                       .Else(() => []),
             _ => []
         };
@@ -77,11 +77,11 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
 
         return jsonQuery.Method switch
         {
-            QueryMethod.Find => If.Value(_vertices)
-                                  .NotNull(x => x.Find())
+            QueryMethod.Find => If.Value(_queryElements)
+                                  .NotNull(x => x.Find().Execute())
                                   .Else(() => []),
-            QueryMethod.FindPath => If.Value(_vertices)
-                                      .NotNull(x => x.FindPath())
+            QueryMethod.FindPath => If.Value(_queryElements)
+                                      .NotNull(x => x.FindPath().Execute())
                                       .Else(() => []),
             _ => []
         };
@@ -109,11 +109,11 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
         {
             if (_nodePredicate is not null)
             {
-                _vertices = _graphQuery.V(x => _nodePredicate(x, v));
+                _queryElements = _graphQuery.V(x => _nodePredicate(x, v));
             }
             else if (_nodeIdPredicate is not null)
             {
-                _vertices = _graphQuery.V(x => _nodeIdPredicate(x, v));
+                _queryElements = _graphQuery.V(x => _nodeIdPredicate(x, v));
             }
         }
         
@@ -123,15 +123,15 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
 
     public override void VisitOut(Dictionary<string, object?> @out)
     {
-        if (_vertices is not null)
+        if (_queryElements is not null)
         {
             if (_nodePredicate is not null)
             {
-                _vertices = _vertices.Out(x => _nodePredicate(x, @out));
+                _queryElements = _queryElements.Out(x => _nodePredicate(x, @out));
             }
             else if (_nodeIdPredicate is not null)
             {
-                _vertices = _vertices.Out(x => _nodeIdPredicate(x, @out));
+                _queryElements = _queryElements.Out(x => _nodeIdPredicate(x, @out));
             }
         }
         
@@ -140,17 +140,17 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
 
     public override void VisitOut(object? @out)
     {
-        if (_vertices is not null)
+        if (_queryElements is not null)
         {
             if (@out is bool all)
             {
                 if (_nodePredicate is not null)
                 {
-                   _vertices = _vertices.Out((TNode x) => all);
+                   _queryElements = _queryElements.Out((TNode x) => all);
                 }
                 else if (_nodeIdPredicate is not null)
                 {
-                    _vertices = _vertices.Out((TNodeId x) => all);
+                    _queryElements = _queryElements.Out((TNodeId x) => all);
                 }
             }
         }

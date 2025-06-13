@@ -3,9 +3,10 @@ using Foundation.Collections.Generic;
 
 namespace Foundation.Graph.Query;
 
-public class Vertices<TNodeId, TNode, TEdge, TGraph> : IVertices<TNodeId, TNode, TEdge, TGraph>
+public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>
     where TEdge : IEdge<TNodeId>
     where TNodeId : notnull
+    where TNode : notnull
     where TGraph : IGraph<TNodeId, TNode, TEdge>
 {
     private readonly TGraph _graph;
@@ -16,7 +17,7 @@ public class Vertices<TNodeId, TNode, TEdge, TGraph> : IVertices<TNodeId, TNode,
     private readonly Func<TNodeId, IEnumerable<TEdge>> _outEdges;
     private readonly IEnumerable<KeyValuePair<TNodeId, TNode>>? _path;
 
-    public Vertices(
+    public GraphQueryElement(
         TGraph graph,
         Func<TNode, bool> nodePredicate,
         IEnumerable<KeyValuePair<TNodeId, TNode>> nodes,
@@ -41,7 +42,7 @@ public class Vertices<TNodeId, TNode, TEdge, TGraph> : IVertices<TNodeId, TNode,
         return _graph.Edges.Where(e => e.Source.Equals(nodeId));
     }
 
-    public Vertices(
+    public GraphQueryElement(
         TGraph graph,
         Func<TNodeId, bool> nodeIdPredicate,
         IEnumerable<KeyValuePair<TNodeId, TNode>> nodes,
@@ -50,13 +51,18 @@ public class Vertices<TNodeId, TNode, TEdge, TGraph> : IVertices<TNodeId, TNode,
     {
         _graph = graph.ThrowIfNull();
         _nodeIdPredicate = nodeIdPredicate.ThrowIfNull();
+
+        _outEdges = _graph is IDirectedGraph<TNodeId, TEdge> directedGraph
+           ? directedGraph.OutgoingEdges
+           : OutGoingEdges;
+
         _nodes = nodes.ThrowIfNull().Where(x => nodeIdPredicate(x.Key));
 
         _path = path is null ? _nodes : path;
     }
 
-    private IVertices<TNodeId, TNode, TEdge, TGraph>? CreateFromPredicate(
-        IVertices<TNodeId, TNode, TEdge, TGraph>? query)
+    private IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? CreateFromPredicate(
+        IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? query)
     {
         if (query is null || query.Nodes is null) return null;
 
@@ -66,37 +72,36 @@ public class Vertices<TNodeId, TNode, TEdge, TGraph> : IVertices<TNodeId, TNode,
         return null;
     }
 
-    private IVertices<TNodeId, TNode, TEdge, TGraph>? CreateFromPredicate(
-        IVertices<TNodeId, TNode, TEdge, TGraph>? query, Func<TNode, bool> predicate)
+    private IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? CreateFromPredicate(
+        IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? query, Func<TNode, bool> predicate)
     {
         if (query is null || query.Nodes is null) return null;
 
-            return new Vertices<TNodeId, TNode, TEdge, TGraph>(
+            return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(
                                     _graph,
                                     predicate,
                                     query.Nodes,
                                     query.Path);
     }
 
-    private IVertices<TNodeId, TNode, TEdge, TGraph> CreateFromPredicate(
-        IVertices<TNodeId, TNode, TEdge, TGraph>? query, Func<TNodeId, bool> predicate)
+    private IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? CreateFromPredicate(
+        IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>? query, Func<TNodeId, bool> predicate)
     {
         if (query is null || query.Nodes is null) return null;
 
-            return new Vertices<TNodeId, TNode, TEdge, TGraph>(
+            return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(
                                     _graph,
                                     predicate,
                                     query.Nodes,
                                     query.Path);
     }
 
-    public IEnumerable<KeyValuePair<TNodeId, TNode>> Find() => _nodes;
+    public IGraphQueryExecute<TNodeId, TNode> Find() => new GraphQueryExecute<TNodeId, TNode>(() => _nodes);
 
-    public IEnumerable<TResult> Find<TResult>(Func<KeyValuePair<TNodeId, TNode>, TResult> selector)
-        => _nodes.Select(selector);
+    public IGraphQueryExecute<TNodeId, TNode, TResult> Find<TResult>(Func<KeyValuePair<TNodeId, TNode>, TResult> selector)
+        => new GraphQueryExecute<TNodeId, TNode, TResult>(() => _nodes.Select(selector));
     
-
-    public IEnumerable<KeyValuePair<TNodeId, TNode>> FindPath() => _path.EmptyIfNull();
+    public IGraphQueryExecute<TNodeId, TNode> FindPath() => new GraphQueryExecute<TNodeId, TNode>(() => _path.EmptyIfNull());
 
     public Func<TNode, bool>? NodePredicate => _nodePredicate;
 
@@ -104,39 +109,65 @@ public class Vertices<TNodeId, TNode, TEdge, TGraph> : IVertices<TNodeId, TNode,
 
     public IEnumerable<KeyValuePair<TNodeId, TNode>>? Nodes => _nodes;
 
-    public IVertices<TNodeId, TNode, TEdge, TGraph> Out(Func<TNode, bool> predicate)
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Out(Func<TNode, bool> predicate)
     {
         var outEdges = _nodes.SelectMany(kv => _outEdges(kv.Key));
         var outNodes = _graph.GetNodeTuples(outEdges.Select(x => x.Target));
 
         var path = _path is null ? outNodes : _path.UnionBy(outNodes, x => x.Key);
 
-        return new Vertices<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, outNodes, path);
+        return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, outNodes, path);
     }
 
-    public IVertices<TNodeId, TNode, TEdge, TGraph> Out(Func<TNodeId, bool> predicate)
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Out(Func<TNodeId, bool> predicate)
     {
         var outEdges = _nodes.SelectMany(kv => _outEdges(kv.Key));
         var outNodes = _graph.GetNodeTuples(outEdges.Select(x => x.Target));
         
         var path = _path is null ? outNodes : _path.UnionBy(outNodes, x => x.Key);
 
-        return new Vertices<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, outNodes, path);
+        return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, outNodes, path);
     }
 
     public IEnumerable<KeyValuePair<TNodeId, TNode>>? Path => _path;
 
-    public IVertices<TNodeId, TNode, TEdge, TGraph> Repeat(
-        Func<IVertices<TNodeId, TNode, TEdge, TGraph>, IVertices<TNodeId, TNode, TEdge, TGraph>> query,
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Repeat(
+        Func<IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>, IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>> query,
         Func<TNode, bool> predicate)
     {
-        IVertices<TNodeId, TNode, TEdge, TGraph> querySource = this;
+        IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> querySource = this;
         while (true)
         {
             var queryResult = query(querySource);
             if (queryResult is null || queryResult.Nodes is null) break;
 
             if (queryResult.Nodes.Any(x => predicate(x.Value)))
+            {
+                var endResult = CreateFromPredicate(queryResult, predicate);
+                if (endResult is null) return this;
+                return endResult;
+            }
+
+            var result = CreateFromPredicate(queryResult);
+            if (result is null || result.Nodes is null) break;
+
+            querySource = result;
+        }
+
+        return this;
+    }
+
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Repeat(
+        Func<IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>, IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>> query,
+        Func<TNodeId, bool> predicate)
+    {
+        IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> querySource = this;
+        while (true)
+        {
+            var queryResult = query(querySource);
+            if (queryResult is null || queryResult.Nodes is null) break;
+
+            if (queryResult.Nodes.Any(x => predicate(x.Key)))
             {
                 var endResult = CreateFromPredicate(queryResult, predicate);
                 if (endResult is null) return this;
