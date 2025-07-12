@@ -10,6 +10,7 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
     where TGraph : IGraph<TNodeId, TNode, TEdge>
 {
     private readonly TGraph _graph;
+    private readonly Func<TNodeId, IEnumerable<TEdge>> _inEdges;
     private readonly Func<TNode, bool>? _nodePredicate;
     private readonly Func<TNodeId, bool>? _nodeIdPredicate;
 
@@ -27,9 +28,16 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
         _graph = graph.ThrowIfNull();
         _nodePredicate = nodePredicate.ThrowIfNull();
 
-        _outEdges = _graph is IDirectedGraph<TNodeId, TEdge> directedGraph
-            ? directedGraph.OutgoingEdges
-            : OutGoingEdges;
+        if (_graph is IDirectedGraph<TNodeId, TEdge> directedGraph)
+        {
+            _inEdges = directedGraph.IncomingEdges;
+            _outEdges = directedGraph.OutgoingEdges;
+        }
+        else
+        {
+            _inEdges = IncomingEdges;
+            _outEdges = OutgoingEdges;
+        }
 
         var (match, noMatch) = nodes.Partition(x => nodePredicate(x.Value));
         _nodes = match;
@@ -37,7 +45,12 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
         _path = path is null ? _nodes : path.Ignore(noMatch);
     }
 
-    private IEnumerable<TEdge> OutGoingEdges(TNodeId nodeId)
+    private IEnumerable<TEdge> IncomingEdges(TNodeId nodeId)
+    {
+        return _graph.Edges.Where(e => e.Target.Equals(nodeId));
+    }
+
+    private IEnumerable<TEdge> OutgoingEdges(TNodeId nodeId)
     {
         return _graph.Edges.Where(e => e.Source.Equals(nodeId));
     }
@@ -52,9 +65,16 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
         _graph = graph.ThrowIfNull();
         _nodeIdPredicate = nodeIdPredicate.ThrowIfNull();
 
-        _outEdges = _graph is IDirectedGraph<TNodeId, TEdge> directedGraph
-           ? directedGraph.OutgoingEdges
-           : OutGoingEdges;
+        if (_graph is IDirectedGraph<TNodeId, TEdge> directedGraph)
+        {
+            _inEdges = directedGraph.IncomingEdges;
+            _outEdges = directedGraph.OutgoingEdges;
+        }
+        else
+        {
+            _inEdges = IncomingEdges;
+            _outEdges = OutgoingEdges;
+        }
 
         _nodes = nodes.ThrowIfNull().Where(x => nodeIdPredicate(x.Key));
 
@@ -96,20 +116,48 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
                                     query.Path);
     }
 
+    /// <inheritdoc/>
     public IGraphQueryExecute<TNodeId, TNode> Find() => new GraphQueryExecute<TNodeId, TNode>(() => _nodes);
 
+    /// <inheritdoc/>
     public IGraphQueryExecute<TNodeId, TNode, TResult> Find<TResult>(Func<KeyValuePair<TNodeId, TNode>, TResult> selector)
         => new GraphQueryExecute<TNodeId, TNode, TResult>(() => _nodes.Select(selector));
     
     public IGraphQueryExecute<TNodeId, TNode> FindPath() => new GraphQueryExecute<TNodeId, TNode>(() => _path.EmptyIfNull());
 
+    /// <inheritdoc/>
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> InV(Func<TNode, bool> predicate)
+    {
+        var incomingEdges = _nodes.SelectMany(kv => _inEdges(kv.Key));
+        var inNodes = _graph.GetNodeTuples(incomingEdges.Select(x => x.Source));
+
+        var path = _path is null ? inNodes : _path.UnionBy(inNodes, x => x.Key);
+
+        return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, inNodes, path);
+    }
+
+    /// <inheritdoc/>
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> InV(Func<TNodeId, bool> predicate)
+    {
+        var incomingEdges = _nodes.SelectMany(kv => _inEdges(kv.Key));
+        var inNodes = _graph.GetNodeTuples(incomingEdges.Select(x => x.Target));
+
+        var path = _path is null ? inNodes : _path.UnionBy(inNodes, x => x.Key);
+
+        return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, inNodes, path);
+    }
+
+    /// <inheritdoc/>
     public Func<TNode, bool>? NodePredicate => _nodePredicate;
 
+    /// <inheritdoc/>
     public Func<TNodeId, bool>? NodeIdPredicate => _nodeIdPredicate;
 
+    /// <inheritdoc/>
     public IEnumerable<KeyValuePair<TNodeId, TNode>>? Nodes => _nodes;
 
-    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Out(Func<TNode, bool> predicate)
+    /// <inheritdoc/>
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> OutV(Func<TNode, bool> predicate)
     {
         var outEdges = _nodes.SelectMany(kv => _outEdges(kv.Key));
         var outNodes = _graph.GetNodeTuples(outEdges.Select(x => x.Target));
@@ -119,7 +167,8 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
         return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, outNodes, path);
     }
 
-    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Out(Func<TNodeId, bool> predicate)
+    /// <inheritdoc/>
+    public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> OutV(Func<TNodeId, bool> predicate)
     {
         var outEdges = _nodes.SelectMany(kv => _outEdges(kv.Key));
         var outNodes = _graph.GetNodeTuples(outEdges.Select(x => x.Target));
@@ -129,8 +178,10 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
         return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(_graph, predicate, outNodes, path);
     }
 
+    /// <inheritdoc/>
     public IEnumerable<KeyValuePair<TNodeId, TNode>>? Path => _path;
 
+    /// <inheritdoc/>
     public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Repeat(
         Func<IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>, IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>> query,
         Func<TNode, bool> predicate)
@@ -157,6 +208,7 @@ public class GraphQueryElement<TNodeId, TNode, TEdge, TGraph> : IGraphQueryEleme
         return this;
     }
 
+    /// <inheritdoc/>
     public IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> Repeat(
         Func<IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>, IGraphQueryElement<TNodeId, TNode, TEdge, TGraph>> query,
         Func<TNodeId, bool> predicate)

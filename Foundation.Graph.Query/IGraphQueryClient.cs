@@ -13,5 +13,9 @@ public interface IGraphQueryClient<TNodeId, TNode, TEdge, TGraph, TQuery>
     where TGraph : IGraph<TNodeId, TNode, TEdge>
     where TQuery : IGraphQuery<TNodeId, TNode, TEdge, TGraph>
 {
+    /// <summary>
+    /// Create new query.
+    /// </summary>
+    /// <returns></returns>
     TQuery NewQuery();
 }

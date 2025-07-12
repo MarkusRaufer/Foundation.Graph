@@ -103,7 +103,7 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
         return () => Execute(query, json, nodeIdPredicate).EmptyIfNull();
     }
 
-    public override void VisitVwithoutOut(Dictionary<string, object?> v)
+    public override void VisitVwithoutOutV(Dictionary<string, object?> v)
     {
         if (_graphQuery is not null)
         {
@@ -118,27 +118,27 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
         }
         
 
-        base.VisitVwithoutOut(v);
+        base.VisitVwithoutOutV(v);
     }
 
-    public override void VisitOut(Dictionary<string, object?> @out)
+    public override void VisitOutV(Dictionary<string, object?> @out)
     {
         if (_queryElements is not null)
         {
             if (_nodePredicate is not null)
             {
-                _queryElements = _queryElements.Out(x => _nodePredicate(x, @out));
+                _queryElements = _queryElements.OutV(x => _nodePredicate(x, @out));
             }
             else if (_nodeIdPredicate is not null)
             {
-                _queryElements = _queryElements.Out(x => _nodeIdPredicate(x, @out));
+                _queryElements = _queryElements.OutV(x => _nodeIdPredicate(x, @out));
             }
         }
         
-        base.VisitOut(@out);
+        base.VisitOutV(@out);
     }
 
-    public override void VisitOut(object? @out)
+    public override void VisitOutV(object? @out)
     {
         if (_queryElements is not null)
         {
@@ -146,15 +146,15 @@ public class JsonGraphQuery<TNodeId, TNode, TEdge, TGraph> : JsonQueryVisitor
             {
                 if (_nodePredicate is not null)
                 {
-                   _queryElements = _queryElements.Out((TNode x) => all);
+                   _queryElements = _queryElements.OutV((TNode x) => all);
                 }
                 else if (_nodeIdPredicate is not null)
                 {
-                    _queryElements = _queryElements.Out((TNodeId x) => all);
+                    _queryElements = _queryElements.OutV((TNodeId x) => all);
                 }
             }
         }
 
-        base.VisitOut(@out);
+        base.VisitOutV(@out);
     }
 }

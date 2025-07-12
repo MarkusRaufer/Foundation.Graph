@@ -1,13 +1,7 @@
 ﻿using Foundation.Graph.Query.Json;
 using Foundation.Text.Json.Serialization;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Foundation.Graph.Query.Tests.Json;
 

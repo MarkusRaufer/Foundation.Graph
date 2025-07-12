@@ -11,7 +11,7 @@ using Node = IdNode<Id, Dictionary<string, object?>>;
 public class JsonGraphQueryTests
 {
     [Fact]
-    public void Test()
+    public void ExecuteQuery_Should_Return2Nodes_When_Find_ParentNodeHasToChildNodes()
     {
         // Arrange
         var graph = GraphTestUtil.CreateGraph();
@@ -21,7 +21,7 @@ public class JsonGraphQueryTests
 
         var nodes = client.NewQuery()
                           .V(x => x.Id == Id.New("I1"))
-                          .Out((Node x) => true)
+                          .OutV((Node x) => true)
                           .Find()
                           .Execute()
                           .ToArray();
@@ -31,7 +31,7 @@ public class JsonGraphQueryTests
             	"Method": "Find",
             	"V": {
             		"Id": "I1",
-            		"Out": true	
+            		"OutV": true	
             	}
             }
             """;

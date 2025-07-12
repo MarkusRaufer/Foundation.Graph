@@ -22,6 +22,7 @@ public partial class GraphQueryClient<TNodeId, TNode, TEdge, TGraph>
     {
     }
 
+    /// <inheritdoc/>
     public override IGraphQuery<TNodeId, TNode, TEdge, TGraph> NewQuery() => new GraphQuery<TNodeId, TNode, TEdge, TGraph>(Graph);
 }
 
@@ -40,5 +41,6 @@ public abstract class GraphQueryClient<TNodeId, TNode, TEdge, TGraph, TQuery>
 
     protected TGraph Graph { get; }
 
+    /// <inheritdoc/>
     public abstract TQuery NewQuery();
 }

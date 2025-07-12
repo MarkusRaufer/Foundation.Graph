@@ -2,6 +2,6 @@
 
 public static class QueryProperty
 {
-    public const string Out = nameof(Out);
+    public const string OutV = nameof(OutV);
     public const string V = nameof(V);
 }

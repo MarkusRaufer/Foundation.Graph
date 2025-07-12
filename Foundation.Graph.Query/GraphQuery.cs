@@ -22,11 +22,13 @@ public class GraphQuery<TNodeId, TNode, TEdge, TGraph>
     {
     }
 
+    /// <inheritdoc/>
     public override IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> V(Func<TNode, bool> predicate)
     {
         return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(Graph, predicate, Graph.NodeTuples, null);
     }
 
+    /// <inheritdoc/>
     public override IGraphQueryElement<TNodeId, TNode, TEdge, TGraph> V(Func<TNodeId, bool> predicate)
     {
         return new GraphQueryElement<TNodeId, TNode, TEdge, TGraph>(Graph, predicate, Graph.NodeTuples, null);
@@ -48,7 +50,9 @@ public abstract class GraphQuery<TNodeId, TNode, TEdge, TGraph, TQueryElement>
 
     protected TGraph Graph { get; }
 
+    /// <inheritdoc/>
     public abstract TQueryElement V(Func<TNode, bool> predicate);
 
+    /// <inheritdoc/>
     public abstract TQueryElement V(Func<TNodeId, bool> predicate);
 }

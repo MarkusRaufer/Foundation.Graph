@@ -3,6 +3,7 @@ using Foundation.ComponentModel;
 using Foundation.Graph;
 using Newtonsoft.Json.Linq;
 using Shouldly;
+using System.Data;
 using System.Dynamic;
 
 namespace Foundation.Graph.Query.Tests;
@@ -15,7 +16,7 @@ using State = Dictionary<string, object?>;
 public class GraphQueryClientTests
 {
     [Fact]
-    public void Find_Should_ReturnInvoiceLineItems_When_QueryFoundInvoiceLineItems()
+    public void OutV_Find_Should_ReturnInvoiceLineItems_When_QueryFoundInvoiceLineItems()
     {
         // Arrange
         var graph = GraphTestUtil.CreateGraph();
@@ -26,7 +27,7 @@ public class GraphQueryClientTests
         // Act
         var lineItems = client.NewQuery()
                               .V(x => x.Id == Id.New("I1"))
-                              .Out((Node x) => true)
+                              .OutV((Node x) => true)
                               .Find()
                               .Execute()
                               .ToArray();
@@ -52,7 +53,7 @@ public class GraphQueryClientTests
     }
 
     [Fact]
-    public void FindPath_Should_ReturnPathIncludingInvoiceAndInvoiceLineItems_When_QueryFoundInvoiceLineItems()
+    public void OutV_FindPath_Should_ReturnPathIncludingInvoiceAndInvoiceLineItems_When_QueryFoundInvoiceLineItems()
     {
         // Arrange
         var graph = GraphTestUtil.CreateGraph();
@@ -63,7 +64,7 @@ public class GraphQueryClientTests
         // Act
         var nodes = client.NewQuery()
                           .V(x => x.Id == Id.New("I1"))
-                          .Out((Node x) => true)
+                          .OutV((Node x) => true)
                           .FindPath()
                           .Execute()
                           .ToArray();
@@ -94,7 +95,7 @@ public class GraphQueryClientTests
     }
 
     [Fact]
-    public void Repeat_Should_ReturnPathWithAllNodes_When_QueryUsesFindPath()
+    public void Repeat_OutV_Should_ReturnPathWithAllNodes_When_QueryWhereStateKeyIsObjectType()
     {
         // Arrange
         var graph = GraphTestUtil.CreateGraph();
@@ -106,7 +107,7 @@ public class GraphQueryClientTests
         // Act
         var nodes = client.NewQuery()
                           .V(x => x.Id == Id.New("Sales"))
-                          .Repeat(x => x.Out((Node x) => true), x => $"{x.State[nameof(ITypedObject<Any>.ObjectType)]}" == invoiceLineItemObjectType)
+                          .Repeat(x => x.OutV((Node x) => true), x => $"{x.State[nameof(ITypedObject<Any>.ObjectType)]}" == invoiceLineItemObjectType)
                           .FindPath()
                           .Execute()
                           .ToArray();
@@ -147,7 +148,7 @@ public class GraphQueryClientTests
     }
 
     [Fact]
-    public void Repeat2_Should_ReturnPathWithAllNodes_When_QueryUsesFindPath()
+    public void Repeat_OutV_Should_ReturnPathWithAllNodes_When_QueryStateTryGetValueOfObjectTypeKey()
     {
         // Arrange
         var objectTypeKey = nameof(ITypedObject<Any>.ObjectType);
@@ -162,7 +163,7 @@ public class GraphQueryClientTests
         // Act
         var nodes = client.NewQuery()
                           .V(x => x.Id == Id.New("Sales"))
-                          .Repeat(x => x.Out((Node x) => true), x => x.Id == invoiceLineItem.Id)
+                          .Repeat(x => x.OutV((Node x) => true), x => x.Id == invoiceLineItem.Id)
                           .FindPath()
                           .Execute()
                           .ToArray();
@@ -196,5 +197,46 @@ public class GraphQueryClientTests
         objectType.ShouldBe("InvoiceLineItem");
         ili1.Key.ShouldBe(invoiceLineItem.Id);
         ili1.Value.Id.ShouldBe(invoiceLineItem.Id);
+    }
+
+    [Fact]
+    public void Repeat_InV_Should_ReturnPathWithAllNodes_When_QueryStateTryGetValueOfObjectTypeKey()
+    {
+        // Arrange
+        var objectTypeKey = nameof(ITypedObject<Any>.ObjectType);
+        var graph = GraphTestUtil.CreateGraph();
+        GraphTestUtil.AddNodesAndEdges(graph);
+        var invoiceObjectType = "Invoice";
+        var invoiceLineItemObjectType = "InvoiceLineItem";
+        var invoiceLineItem = graph.Nodes.First(x => x.State.TryGetValue(objectTypeKey, out var objType) && $"{objType}" == invoiceLineItemObjectType);
+
+        var client = GraphQueryClient.New<Id, Node, Edge, G>(graph);
+
+        // Act
+        var nodes = client.NewQuery()
+                          .V(x => x.Id == invoiceLineItem.Id)
+                          .Repeat(x => x.InV((Node x) => true), x => x.State.TryGetValue(objectTypeKey, out var objType) && objType == invoiceObjectType)
+                          .FindPath()
+                          .Execute()
+                          .ToArray();
+
+        // Assert
+        nodes.Length.ShouldBe(2);
+
+        var node1 = nodes[0];
+        var exists = node1.Value.State.TryGetValue(nameof(ITypedObject<Any>.ObjectType), out var objectType);
+        exists.ShouldBeTrue();
+
+        objectType.ShouldNotBeNull();
+        objectType.ShouldBe("InvoiceLineItem");
+
+        node1.Key.ShouldBe(invoiceLineItem.Id);
+
+        var node2 = nodes[1];
+        exists = node2.Value.State.TryGetValue(nameof(ITypedObject<Any>.ObjectType), out objectType);
+        exists.ShouldBeTrue();
+
+        objectType.ShouldNotBeNull();
+        objectType.ShouldBe("Invoice");
     }
 }
