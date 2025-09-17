@@ -1,5 +1,4 @@
-using FluentAssertions;
-
+using Shouldly;
 namespace Foundation.Graph;
 
 
@@ -21,7 +20,7 @@ public class DirectedAdjacencyEdgeSetTests
 
         var inOfA = sut.IncomingNodes("a").ToArray();
 
-        inOfA.Length.Should().Be(1);
+        inOfA.Length.ShouldBe(1);
         inOfA.Contains("d");
     }
 
@@ -40,7 +39,7 @@ public class DirectedAdjacencyEdgeSetTests
 
         var outOfA = sut.OutgoingNodes("a").ToArray();
 
-        outOfA.Length.Should().Be(3);
+        outOfA.Length.ShouldBe(3);
         outOfA.Contains("b");
         outOfA.Contains("d");
         outOfA.Contains("e");

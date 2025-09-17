@@ -1,7 +1,5 @@
-﻿using FluentAssertions;
-using Foundation.Graph.Algorithm;
-using Foundation.Graph.Linq;
-using System.Linq.Expressions;
+﻿using Foundation.Graph.Algorithm;
+using Shouldly;
 
 namespace Foundation.Graph.Tests.Algorithm;
 
@@ -17,7 +15,7 @@ public class DirectedSearchTests
 
         var result = DirectedSearch.Bfs.CommonParent(edgeSet, [111, 211]);
 
-        result.IsNone.Should().BeTrue();
+        result.IsNone.ShouldBeTrue();
     }
 
 
@@ -67,42 +65,42 @@ public class DirectedSearchTests
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [11, 21]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [112, 212]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1121, 2131]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [11, 2122]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1111, 121, 2122]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [112, 12, 2111]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1111, 1121, 121, 2111, 2132]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [2131, 212, 2111, 112, 1112]);
 
-            result.TryGet(out var parent).Should().BeFalse();
+            result.TryGet(out var parent).ShouldBeFalse();
         }
         static Edge<int> newEdge(int source, int target) => new(source, target);
     }
@@ -117,8 +115,8 @@ public class DirectedSearchTests
 
         var result = DirectedSearch.Bfs.CommonParent(edgeSet, [111, 112]);
 
-        result.TryGet(out var parent).Should().BeTrue();
-        parent.Should().Be(11);
+        result.TryGet(out var parent).ShouldBeTrue();
+        parent.ShouldBe(11);
     }
 
     [Fact]
@@ -167,50 +165,50 @@ public class DirectedSearchTests
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1121, 1122]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(112);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(112);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1111, 112]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(11);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(11);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1311, 1322]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(13);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(13);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1111, 1322]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(1);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(1);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1311, 1322, 1331]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(13);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(13);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1311, 132, 1331]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(13);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(13);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1322, 131, 13]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(1);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(1);
         }
         {
             var result = DirectedSearch.Bfs.CommonParent(edgeSet, [1111, 112, 1311, 132, 1331]);
 
-            result.TryGet(out var parent).Should().BeTrue();
-            parent.Should().Be(1);
+            result.TryGet(out var parent).ShouldBeTrue();
+            parent.ShouldBe(1);
         }
 
         static Edge<int> newEdge(int source, int target) => new(source, target);
@@ -225,18 +223,18 @@ public class DirectedSearchTests
 
         var incomingEdges = DirectedSearch.Bfs.IncomingEdgesWithDepthLevel(edgeSet, 1122).ToArray();
 
-        incomingEdges.Length.Should().Be(3);
+        incomingEdges.Length.ShouldBe(3);
         {
             var incomingEdge = incomingEdges[0];
-            incomingEdge.Depth.Should().Be(1);
+            incomingEdge.Depth.ShouldBe(1);
         }
         {
             var incomingEdge = incomingEdges[1];
-            incomingEdge.Depth.Should().Be(2);
+            incomingEdge.Depth.ShouldBe(2);
         }
         {
             var incomingEdge = incomingEdges[2];
-            incomingEdge.Depth.Should().Be(3);
+            incomingEdge.Depth.ShouldBe(3);
         }
     }
 
@@ -254,18 +252,18 @@ public class DirectedSearchTests
        
         var incomingNodes = DirectedSearch.Bfs.IncomingNodesWithDepthLevel(graph, 1122).ToArray();
 
-        incomingNodes.Length.Should().Be(3);
+        incomingNodes.Length.ShouldBe(3);
         {
             var incomingNode = incomingNodes[0];
-            incomingNode.Depth.Should().Be(1);
+            incomingNode.Depth.ShouldBe(1);
         }
         {
             var incomingNode = incomingNodes[1];
-            incomingNode.Depth.Should().Be(2);
+            incomingNode.Depth.ShouldBe(2);
         }
         {
             var incomingNode = incomingNodes[2];
-            incomingNode.Depth.Should().Be(3);
+            incomingNode.Depth.ShouldBe(3);
         }
     }
 
@@ -279,13 +277,13 @@ public class DirectedSearchTests
 
         var outgoingEdges = DirectedSearch.Bfs.OutgoingEdges(edgeSet, 1, 2).ToArray();
         
-        outgoingEdges.Length.Should().Be(6);
-        outgoingEdges[0].Should().Be(newEdge(1, 11));
-        outgoingEdges[1].Should().Be(newEdge(1, 12));
-        outgoingEdges[2].Should().Be(newEdge(11, 111));
-        outgoingEdges[3].Should().Be(newEdge(11, 112));
-        outgoingEdges[4].Should().Be(newEdge(12, 121));
-        outgoingEdges[5].Should().Be(newEdge(12, 122));
+        outgoingEdges.Length.ShouldBe(6);
+        outgoingEdges[0].ShouldBe(newEdge(1, 11));
+        outgoingEdges[1].ShouldBe(newEdge(1, 12));
+        outgoingEdges[2].ShouldBe(newEdge(11, 111));
+        outgoingEdges[3].ShouldBe(newEdge(11, 112));
+        outgoingEdges[4].ShouldBe(newEdge(12, 121));
+        outgoingEdges[5].ShouldBe(newEdge(12, 122));
 
         static Edge<int> newEdge(int source, int target) => new (source, target);
     }
@@ -299,68 +297,68 @@ public class DirectedSearchTests
 
         var outgoingEdges = DirectedSearch.Bfs.OutgoingEdgesWithDepthLevel(edgeSet, 1).ToArray();
 
-        outgoingEdges.Length.Should().Be(14);
+        outgoingEdges.Length.ShouldBe(14);
 
         // depth level 1
         {
             var outgoingEdge = outgoingEdges[0];
-            outgoingEdge.Depth.Should().Be(1);
+            outgoingEdge.Depth.ShouldBe(1);
         }
         {
             var outgoingEdge = outgoingEdges[1];
-            outgoingEdge.Depth.Should().Be(1);
+            outgoingEdge.Depth.ShouldBe(1);
         }
 
         // depth level 2
         {
             var outgoingEdge = outgoingEdges[2];
-            outgoingEdge.Depth.Should().Be(2);
+            outgoingEdge.Depth.ShouldBe(2);
         }
         {
             var outgoingEdge = outgoingEdges[3];
-            outgoingEdge.Depth.Should().Be(2);
+            outgoingEdge.Depth.ShouldBe(2);
         }
         {
             var outgoingEdge = outgoingEdges[4];
-            outgoingEdge.Depth.Should().Be(2);
+            outgoingEdge.Depth.ShouldBe(2);
         }
         {
             var outgoingEdge = outgoingEdges[5];
-            outgoingEdge.Depth.Should().Be(2);
+            outgoingEdge.Depth.ShouldBe(2);
         }
 
         // depth level 3
         {
             var outgoingEdge = outgoingEdges[6];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[7];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[8];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[9];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[10];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[11];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[12];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
         {
             var outgoingEdge = outgoingEdges[13];
-            outgoingEdge.Depth.Should().Be(3);
+            outgoingEdge.Depth.ShouldBe(3);
         }
     }
 

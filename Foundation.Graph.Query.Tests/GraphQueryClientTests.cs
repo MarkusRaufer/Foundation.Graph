@@ -1,17 +1,12 @@
 using Foundation.Collections.Generic;
 using Foundation.ComponentModel;
-using Foundation.Graph;
-using Newtonsoft.Json.Linq;
 using Shouldly;
-using System.Data;
-using System.Dynamic;
 
 namespace Foundation.Graph.Query.Tests;
 
 using Edge = Edge<Id>;
 using G = Graph<Id, IdNode<Id, Dictionary<string, object?>>, Edge<Id>, NodeSet<Id, IdNode<Id, Dictionary<string, object?>>>, EdgeSet<Id, Edge<Id>>>;
 using Node = IdNode<Id, Dictionary<string, object?>>;
-using State = Dictionary<string, object?>;
 
 public class GraphQueryClientTests
 {

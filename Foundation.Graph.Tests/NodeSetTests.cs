@@ -1,6 +1,6 @@
 namespace Foundation.Graph;
 
-using FluentAssertions;
+using Shouldly;
 using System.Linq;
 using Xunit;
 
@@ -20,21 +20,21 @@ public class NodeSetTests
         sut.AddNode(5, new Node(5, "five"));
 
         var nodes = sut.GetNodes([1, 3, 5]).ToArray();
-        nodes.Length.Should().Be(3);
+        nodes.Length.ShouldBe(3);
         {
             var node = nodes[0];
-            node.Id.Should().Be(1);
-            node.Name.Should().Be("one");
+            node.Id.ShouldBe(1);
+            node.Name.ShouldBe("one");
         }
         {
             var node = nodes[1];
-            node.Id.Should().Be(3);
-            node.Name.Should().Be("three");
+            node.Id.ShouldBe(3);
+            node.Name.ShouldBe("three");
         }
         {
             var node = nodes[2];
-            node.Id.Should().Be(5);
-            node.Name.Should().Be("five");
+            node.Id.ShouldBe(5);
+            node.Name.ShouldBe("five");
         }
     }
 }

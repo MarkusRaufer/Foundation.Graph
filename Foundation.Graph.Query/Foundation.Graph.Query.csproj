@@ -12,12 +12,12 @@
 		<PackageId>Foundation.Graph.Query</PackageId>
 		<PackageTags>graph query; graph search</PackageTags>
 		<ProductName>Foundation.Grap.Query</ProductName>
-		<Version>1.6.25-rc.18</Version>
+		<Version>1.6.28</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Foundation" Version="1.6.25-rc.5" />
-		<PackageReference Include="Foundation.Graph" Version="1.6.25-rc.15" />
+		<PackageReference Include="Foundation" />
+		<PackageReference Include="Foundation.Graph" />
 	</ItemGroup>
 
 </Project>

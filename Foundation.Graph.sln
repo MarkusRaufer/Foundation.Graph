@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31919.166
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11012.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Graph", "Foundation.Graph\Foundation.Graph.csproj", "{DC3C7853-C2A8-4E02-8BC8-DB6EDE028951}"
 EndProject
@@ -10,6 +10,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Graph.Query", "Foundation.Graph.Query\Foundation.Graph.Query.csproj", "{61C629A9-FA2B-6CB0-C8EF-C453323A7BB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Graph.Query.Tests", "Foundation.Graph.Query.Tests\Foundation.Graph.Query.Tests.csproj", "{F5B59A74-5C89-4AF7-912A-3C10AABAF7BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D454D7FC-3F69-4CAE-A43B-64878D3F4D8E}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

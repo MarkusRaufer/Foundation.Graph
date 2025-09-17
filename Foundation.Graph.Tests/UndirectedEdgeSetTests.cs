@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using Foundation.Graph.Algorithm;
+﻿using Foundation.Collections.Generic;
 using Foundation.Graph.Tests;
+using Shouldly;
 
 namespace Foundation.Graph;
 
@@ -20,7 +20,7 @@ public class UndirectedEdgeSetTests
 
         var connections = sut.GetEdges(4).ToArray();
 
-        connections.Length.Should().Be(2);
+        connections.Length.ShouldBe(2);
 
         var expected = new[]
         {
@@ -28,7 +28,7 @@ public class UndirectedEdgeSetTests
             UndirectedEdge.New(4, 5),
         };
 
-        connections.Should().Contain(expected);
+        connections.Contains(expected).ShouldBeTrue();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class UndirectedEdgeSetTests
         }
 
         var connections = sut.GetEdges(8).ToArray();
-        connections.Length.Should().Be(4);
+        connections.Length.ShouldBe(4);
 
         var expected = new[]
         {
@@ -54,6 +54,6 @@ public class UndirectedEdgeSetTests
             UndirectedEdge.New(12, 8),
         };
 
-        connections.Should().Contain(expected);
+        connections.Contains(expected).ShouldBeTrue();
     }
 }
