@@ -1,3 +1,4 @@
+using Foundation;
 using Foundation.Collections.Generic;
 using Foundation.ComponentModel;
 using Shouldly;
@@ -210,7 +211,7 @@ public class GraphQueryClientTests
         // Act
         var nodes = client.NewQuery()
                           .V(x => x.Id == invoiceLineItem.Id)
-                          .Repeat(x => x.InV((Node x) => true), x => x.State.TryGetValue(objectTypeKey, out var objType) && objType == invoiceObjectType)
+                          .Repeat(x => x.InV((Node x) => true), x => x.State.TryGetValue(objectTypeKey, out var objType) && objType.EqualsNullable(invoiceObjectType))
                           .FindPath()
                           .Execute()
                           .ToArray();

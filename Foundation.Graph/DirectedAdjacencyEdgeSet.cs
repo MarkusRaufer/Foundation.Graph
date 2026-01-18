@@ -352,4 +352,6 @@ public class DirectedAdjacencyEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
     public bool ExistsEdge(TNode source, TNode target) => EdgeSet.ExistsEdge(source, target);
 
     public Option<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
+
+    public bool ReplaceEdge(TEdgeId edgeId, TEdge edge) => EdgeSet.ReplaceEdge(edgeId, edge);
 }

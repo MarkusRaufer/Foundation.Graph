@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -13,7 +13,6 @@
 		<PackageId>Foundation.Graph</PackageId>
 		<PackageTags>in memory graph;graph search</PackageTags>
 		<ProductName>Foundation.Graph</ProductName>
-		<Version>1.6.28</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

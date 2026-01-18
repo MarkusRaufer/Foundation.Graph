@@ -15,11 +15,11 @@ public class JsonQueryVisitor
     }
 
     public virtual void VisitV(Dictionary<string, object?> v)
-    {
+    { 
         if (v.TryGetValue(QueryProperty.OutV, out object? value))
         {
             var withoutOutV = v.Ignore(x => x.Key == QueryProperty.OutV)
-                              .ToDictionary();
+                              .ToDictionary(x => x.Key, x => x.Value);
 
             VisitVwithoutOutV(withoutOutV);
 

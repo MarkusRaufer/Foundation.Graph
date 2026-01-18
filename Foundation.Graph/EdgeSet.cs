@@ -176,10 +176,13 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
         FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
+    /// <inheritdoc/>
     public bool ExistsEdge(TEdgeId edgeId) => _edges.ContainsKey(edgeId);
 
+    /// <inheritdoc/>
     public bool ExistsEdge(TEdge edge) => _edges.Values.Any(e => e.Equals(edge));
 
+    /// <inheritdoc/>
     public bool ExistsEdge(TNode source, TNode target)
     {
         return _edges.Values.Any(x => x.Source.Equals(source) && x.Target.Equals(target));
@@ -190,6 +193,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
         CollectionChanged?.Invoke(this, args);
     }
 
+    /// <inheritdoc/>
     public Option<TEdge> GetEdge(TEdgeId edgeId)
     {
         if (_edges.TryGetValue(edgeId, out TEdge? edge)) return Option.Some(edge);
@@ -197,10 +201,13 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
         return Option.None<TEdge>();
     }
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> GetEdges([DisallowNull] TNode node) => _edges.Values.Where(e => e.Source.Equals(node) || e.Target.Equals(node));
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => _edges.Values.Where(e => e.Source.Equals(source) && e.Target.Equals(target));
 
+    /// <inheritdoc/>
     public bool RemoveEdge([DisallowNull] TEdge edge)
     {
         var removed = _edges.Remove(edge.Id);
@@ -209,6 +216,7 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
         return removed;
     }
 
+    /// <inheritdoc/>
     public bool RemoveEdge([DisallowNull] TEdgeId edgeId)
     {
         if(null != CollectionChanged)
@@ -222,12 +230,14 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
         return _edges.Remove(edgeId);
     }
 
+    /// <inheritdoc/>
     public void RemoveEdges(IEnumerable<TEdgeId> edgeIds)
     {
         foreach (var edgeId in edgeIds)
             RemoveEdge(edgeId);
     }
 
+    /// <inheritdoc/>
     public void RemoveEdges(IEnumerable<TEdge> edges)
     {
         var removedEdges = new List<TEdge>();
@@ -239,5 +249,14 @@ public class EdgeSet<TNode, TEdgeId, TEdge>
         if (0 == removedEdges.Count) return;
 
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedEdges.ToArray()));
+    }
+
+    /// <inheritdoc/>
+    public bool ReplaceEdge(TEdgeId edgeId, TEdge edge)
+    {
+        if (!_edges.ContainsKey(edgeId)) return false;
+
+        _edges[edgeId] = edge;
+        return true;
     }
 }

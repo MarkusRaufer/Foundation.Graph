@@ -4,8 +4,8 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Foundation" Version="1.6.28" />
-    <PackageVersion Include="Foundation.Graph" Version="1.6.28" />
+    <PackageVersion Include="Foundation" Version="1.9.3" />
+    <PackageVersion Include="Foundation.Graph" Version="1.9.3" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

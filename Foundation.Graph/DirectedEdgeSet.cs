@@ -296,6 +296,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         Dispose(false);
     }
 
+    /// <inheritdoc/>
     public void AddEdge([DisallowNull] TEdge edge)
     {
         edge.ThrowIfNull();
@@ -307,6 +308,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         EdgeSet.AddEdge(edge);
     }
 
+    /// <inheritdoc/>
     public void AddEdges(IEnumerable<TEdge> edges)
     {
         foreach (var edge in edges)
@@ -344,6 +346,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         if (!edges.ContainsKey(edge.Id)) edges.Add(edge.Id, edge);
     }
 
+    /// <inheritdoc/>
     public void ClearEdges()
     {
         if (0 == EdgeSet.EdgeCount) return;
@@ -373,8 +376,10 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         }
     }
 
+    /// <inheritdoc/>
     public int EdgeCount => EdgeSet.EdgeCount;
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> Edges => EdgeSet.Edges;
 
     protected TEdgeSet EdgeSet { get; }
@@ -384,26 +389,30 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         CollectionChanged?.Invoke(this, e);
     }
 
+    /// <inheritdoc/>
     public bool ExistsEdge(TEdgeId edgeId) => EdgeSet.ExistsEdge(edgeId);
 
+    /// <inheritdoc/>
     public bool ExistsEdge(TEdge edge) => EdgeSet.ExistsEdge(edge);
 
-    public bool ExistsEdge(TNode source, TNode target)
-    {
-        return EdgeSet.ExistsEdge(source, target);
-    }
+    /// <inheritdoc/>
+    public bool ExistsEdge(TNode source, TNode target) => EdgeSet.ExistsEdge(source, target);
 
     protected void FireCollectionChanged(NotifyCollectionChangedEventArgs args)
     {
         CollectionChanged?.Invoke(this, args);
     }
 
+    /// <inheritdoc/>
     public Option<TEdge> GetEdge(TEdgeId edgeId) => EdgeSet.GetEdge(edgeId);
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> GetEdges(TNode node) => EdgeSet.GetEdges(node);
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> GetEdges(TNode source, TNode target) => EdgeSet.GetEdges(source, target);
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> IncomingEdges(TNode node)
     {
         if (_incomingEdges.Value.TryGetValue(node, out IDictionary<TEdgeId, TEdge>? edges))
@@ -412,6 +421,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         return Enumerable.Empty<TEdge>();
     }
 
+    /// <inheritdoc/>
     public IEnumerable<TNode> IncomingNodes(TNode node, Func<TEdge, bool>? predicate = null)
     {
         return (null == predicate)
@@ -419,6 +429,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
             : IncomingEdges(node).Where(predicate).Select(e => e.Source);
     }
 
+    /// <inheritdoc/>
     public IEnumerable<TEdge> OutgoingEdges(TNode node)
     {
         if (_outgoingEdges.Value.TryGetValue(node, out IDictionary<TEdgeId, TEdge>? edges))
@@ -427,6 +438,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         return Enumerable.Empty<TEdge>();
     }
 
+    /// <inheritdoc/>
     public IEnumerable<TNode> OutgoingNodes(TNode node, Func<TEdge, bool>? predicate = null)
     {
         return (null == predicate)
@@ -434,6 +446,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
             : OutgoingEdges(node).Where(predicate).Select(e => e.Target);
     }
 
+    /// <inheritdoc/>
     public bool RemoveEdge([DisallowNull] TEdgeId edgeId)
     {
         var edge = GetEdge(edgeId);
@@ -442,6 +455,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         return RemoveEdge(edge.OrThrow());
     }
 
+    /// <inheritdoc/>
     public bool RemoveEdge(TEdge edge)
     {
         if (null == edge) return false;
@@ -452,6 +466,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         return EdgeSet.RemoveEdge(edge);
     }
 
+    /// <inheritdoc/>
     public void RemoveEdges(IEnumerable<TEdgeId> edgeIds)
     {
         var edges = edgeIds.Select(id => EdgeSet.GetEdge(id))
@@ -460,6 +475,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         RemoveEdges(edges.ToArray());
     }
 
+    /// <inheritdoc/>
     public void RemoveEdges(IEnumerable<TEdge> edges)
     {
         foreach (var edge in edges)
@@ -471,6 +487,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         EdgeSet.RemoveEdges(edges);
      }
 
+    /// <inheritdoc/>
     protected bool RemoveIncomingEdge(TNode target, TEdgeId edgeId)
     {
         if (!_incomingEdges.Value.TryGetValue(target, out IDictionary<TEdgeId, TEdge>? edges))
@@ -483,6 +500,7 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
         return removed;
     }
 
+    /// <inheritdoc/>
     protected bool RemoveOutgoingEdge(TNode source, TEdgeId edgeId)
     {
         if (!_outgoingEdges.Value.TryGetValue(source, out IDictionary<TEdgeId, TEdge>? edges))
@@ -494,4 +512,8 @@ public class DirectedEdgeSet<TNode, TEdgeId, TEdge, TEdgeSet>
 
         return removed;
     }
+
+    /// <inheritdoc/>
+
+    public bool ReplaceEdge(TEdgeId edgeId, TEdge edge) => EdgeSet.ReplaceEdge(edgeId, edge);
 }

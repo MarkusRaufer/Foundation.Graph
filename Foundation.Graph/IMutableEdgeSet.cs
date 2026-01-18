@@ -70,6 +70,24 @@ public interface IMutableEdgeSet<in TNode, TEdge>
 public interface IMutableEdgeSet<in TNode, TEdgeId, TEdge> : IMutableEdgeSet<TNode, TEdge>
     where TEdge : IEdge<TEdgeId, TNode>
 {
+    /// <summary>
+    /// Removes the edge with the specific edgeId.
+    /// </summary>
+    /// <param name="edgeId">The identifier of the edge.</param>
+    /// <returns>true if the edge was removed.</returns>
     bool RemoveEdge(TEdgeId edgeId);
+
+    /// <summary>
+    /// Removes a list of edges.
+    /// </summary>
+    /// <param name="edgeIds">The identifiers of the edges.</param>
     void RemoveEdges(IEnumerable<TEdgeId> edgeIds);
+
+    /// <summary>
+    /// Replaces the existing edge with <see cref="Edge.Id"/> <paramref name="edgeId"/>.
+    /// </summary>
+    /// <param name="edgeId">The identifier of the edge.</param>
+    /// <param name="edge">The edge which should replace the existing one.</param>
+    /// <returns>true if replaced.</returns>
+    bool ReplaceEdge(TEdgeId edgeId, TEdge edge);
 }

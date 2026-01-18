@@ -1,4 +1,6 @@
-﻿namespace Foundation.Graph.Query;
+﻿using Foundation.Graph;
+
+namespace Foundation.Graph.Query;
 
 public static class GraphQuery
 {

@@ -677,19 +677,23 @@ namespace Foundation.Graph
         public abstract bool RemoveNode(TNodeId id);
 
         /// <inheritdoc/>
+        public bool ReplaceEdge(TEdgeId edgeId, TEdge edge) => EdgeSet.ReplaceEdge(edgeId, edge);
+
+        /// <inheritdoc/>
         public virtual void RemoveNodes(IEnumerable<TNodeId> nodes)
         {
             foreach (var node in nodes.ToList())
                 RemoveNode(node);
         }
 
+
+        /// <inheritdoc/>
+        public abstract bool ReplaceNode(TNodeId nodeId, TNode node);
+
         /// <inheritdoc/>
         public bool TryGetNode(TNodeId nodeId, [NotNullWhen(true)] out TNode? node)
         {
             return NodeSet.TryGetNode(nodeId, out node);
         }
-
-        /// <inheritdoc/>
-        public abstract bool ReplaceNode(TNodeId nodeId, TNode node);
     }
 }
